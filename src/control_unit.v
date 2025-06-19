@@ -8,13 +8,15 @@ module control_unit(
     output reg MemWrite,
     output reg ALUSrc,
     output reg [1:0] ImmSrc,
-    output reg RegWrite
+    output reg RegWrite,
+    output reg Branch,
+    output reg Jump
     );
     
     always@(*) begin
         PCSrc = 0; ResultSrc = 0; MemRead = 0;
         MemWrite = 0; ALUSrc = 0; ImmSrc = 2'b11;
-        RegWrite = 0;
+        RegWrite = 0; Branch = 0; Jump = 0;
         
         case (opcode)
         
@@ -52,10 +54,23 @@ module control_unit(
            end
            
            4'b1011: begin
-                
+                ImmSrc = 2'b01; Branch = 1;
+           end
+           
+           4'b1100: begin
+                ImmSrc = 2'b01; Branch = 1;
+           end
+           
+           4'b1101: begin
+                PCSrc = 1; ImmSrc = 2'b00; Jump = 1;
+           end
+           
+           4'b1110: begin
+           end
+           
+           4'b1111: begin
+           end
         
         endcase
-       
-    end
-        
+    end  
 endmodule
