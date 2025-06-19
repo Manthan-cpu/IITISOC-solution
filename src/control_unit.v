@@ -2,7 +2,6 @@
 
 module control_unit(
     input wire [3:0] opcode,
-    output reg PCSrc,
     output reg ResultSrc,
     output reg MemRead,
     output reg MemWrite,
@@ -14,9 +13,9 @@ module control_unit(
     );
     
     always@(*) begin
-        PCSrc = 0; ResultSrc = 0; MemRead = 0;
-        MemWrite = 0; ALUSrc = 0; ImmSrc = 2'b11;
-        RegWrite = 0; Branch = 0; Jump = 0;
+        ResultSrc = 0; MemRead = 0; MemWrite = 0;
+        ALUSrc = 0; ImmSrc = 2'b11; RegWrite = 0;
+        Branch = 0; Jump = 0;
         
         case (opcode)
         
@@ -45,7 +44,7 @@ module control_unit(
            end
            
            4'b1101: begin
-                PCSrc = 1; ImmSrc = 2'b00; Jump = 1;
+                ImmSrc = 2'b00; Jump = 1;
            end
            
            4'b1110, 4'b1111: begin
