@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module control_unit(
-    input [3:0] opcode,
+    input wire [3:0] opcode,
     output reg PCSrc,
     output reg ResultSrc,
     output reg MemRead,
