@@ -1,15 +1,15 @@
 `timescale 1ns/1ps
 
 module register_file(
-    input clk,
-    input reset,
-    input RegWrite,
-    input [2:0] read_reg1,
-    input [2:0] read_reg2,
-    input [2:0] write_reg,
-    input signed [7:0] write_data,
-    output signed [7:0] read_data1,
-    output signed [7:0] read_data2
+    input wire clk,
+    input wire reset,
+    input wire RegWrite,
+    input wire [2:0] read_reg1,
+    input wire [2:0] read_reg2,
+    input wire [2:0] write_reg,
+    input wire signed [7:0] write_data,
+    output wire signed [7:0] read_data1,
+    output wire signed [7:0] read_data2
     );
     
     reg [7:0] regfile [7:0];
