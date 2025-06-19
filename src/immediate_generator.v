@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
 module immediate_generator(
-    input [15:0] instruction,
-    input [1:0] ImmSrc,
+    input wire [15:0] instruction,
+    input wire [1:0] ImmSrc,
     output reg signed [7:0] imm_out
     );
     
