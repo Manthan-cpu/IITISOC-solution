@@ -20,17 +20,8 @@ module control_unit(
         
         case (opcode)
         
-            4'b0000: RegWrite = 1;
-            
-            4'b0001: RegWrite = 1;
-            
-            4'b0010: RegWrite = 1;
-            
-            4'b0011: RegWrite = 1;
-            
-            4'b0100: RegWrite = 1;
-            
-            4'b0101: RegWrite = 1;
+            4'b0000, 4'b0001, 4'b0010,
+            4'b0011, 4'b0100, 4'b0101: RegWrite = 1;
             
             4'b0110: begin
                 ImmSrc = 2'b10; RegWrite = 1; ALUSrc = 1;
@@ -45,19 +36,11 @@ module control_unit(
                 MemWrite = 1; ALUSrc = 1; ImmSrc = 2'b01;
             end
             
-            4'b1001: begin
+            4'b1001, 4'b1010: begin
                 ALUSrc = 1; ImmSrc = 2'b01; RegWrite = 1;
            end
            
-           4'b1010: begin
-                ALUSrc = 1; ImmSrc = 2'b00; RegWrite = 1;
-           end
-           
-           4'b1011: begin
-                ImmSrc = 2'b01; Branch = 1;
-           end
-           
-           4'b1100: begin
+           4'b1011, 4'b1100: begin
                 ImmSrc = 2'b01; Branch = 1;
            end
            
@@ -65,10 +48,7 @@ module control_unit(
                 PCSrc = 1; ImmSrc = 2'b00; Jump = 1;
            end
            
-           4'b1110: begin
-           end
-           
-           4'b1111: begin
+           4'b1110, 4'b1111: begin
            end
         
         endcase
