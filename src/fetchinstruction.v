@@ -21,7 +21,7 @@ input wire clk,
     reg [15:0] instruction_memory [0:255];
 
     initial begin
-        
+        $readmemh("instruction .mem", instruction_memory);
         
     end
 
