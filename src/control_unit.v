@@ -35,10 +35,13 @@ module control_unit(
                 MemWrite = 1; ALUSrc = 1; ImmSrc = 2'b01;
             end
             
-            4'b1001, 4'b1010: begin
-                ALUSrc = 1; ImmSrc = 2'b01; RegWrite = 1;
-           end
-           
+           4'b1001: begin // ADDI
+    ALUSrc = 1; ImmSrc = 2'b01; RegWrite = 1;
+end
+
+4'b1010: begin // LDI
+    ALUSrc = 1; ImmSrc = 2'b00; RegWrite = 1;
+end
            4'b1011, 4'b1100: begin
                 ImmSrc = 2'b01; Branch = 1;
            end
