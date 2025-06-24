@@ -53,10 +53,14 @@ module datapath(
                 rd = instruction[5:3];
             end
             
-            4'b0110, 4'b0111, 4'b1000,
-            4'b1001: begin
+            4'b0110, 4'b0111, 4'b1001: begin
                 rs1 = instruction[8:6];
                 rd = instruction[11:9];
+            end
+            
+            4'b1000: begin
+                rs1 = instruction[8:6];
+                rs2 = instruction[11:9];
             end
             
             4'b1010: begin
