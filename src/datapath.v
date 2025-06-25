@@ -12,9 +12,10 @@ module datapath(
     input wire Branch,
     input wire Jump,
     output wire [3:0] opcode,
-    output wire PCSrc
-    );
-    
+    output wire PCSrc,
+    output wire [7:0] WriteData   // ✅ Added for testbench
+);
+
     wire [15:0] instruction;
     wire signed [7:0] read_data1, read_data2, alu_in2,
                       alu_result, imm_out, mem_data,
@@ -41,41 +42,35 @@ module datapath(
     reg [2:0] rs1, rs2, rd;
     
     always@(*) begin
-    
         rs1 = 3'b0; rs2 = 3'b0; rd = 3'b0;
-        
         case(opcode)
-            
             4'b0000, 4'b0001, 4'b0010,
             4'b0011, 4'b0100, 4'b0101: begin
                 rs1 = instruction[11:9];
                 rs2 = instruction[8:6];
                 rd = instruction[5:3];
             end
-            
             4'b0110, 4'b0111, 4'b1001: begin
                 rs1 = instruction[8:6];
                 rd = instruction[11:9];
             end
-            
             4'b1000: begin
                 rs1 = instruction[8:6];
                 rs2 = instruction[11:9];
             end
-            
             4'b1010: begin
                 rd = instruction[11:9];
             end
-            
             4'b1011, 4'b1100: begin
                 rs1 = instruction[11:9];
                 rs2 = instruction[8:6];
             end
-            
             4'b1101, 4'b1110, 4'b1111: begin
+                // No register access needed
             end
         endcase
     end
+
     register_file reg_file (
         .clk(clk),
         .reset(reset),
@@ -87,13 +82,13 @@ module datapath(
         .read_data1(read_data1),
         .read_data2(read_data2)
     );
-    
+
     immediate_generator imm_gen(
         .instruction(instruction),
         .ImmSrc(ImmSrc),
         .imm_out(imm_out)
     );
-    
+
     alu alu(
         .a(read_data1),
         .b(alu_in2),
@@ -103,7 +98,7 @@ module datapath(
         .zero(zero),
         .branch_taken(branch_taken)
     );
-    
+
     memory_stage mem_stage(
         .clk(clk),
         .reset(reset),
@@ -113,12 +108,15 @@ module datapath(
         .write_data(read_data2),
         .read_data(mem_data)
     );
-    
+
     writeback_stage wb_stage(
         .ResultSrc(ResultSrc),
         .alu_result(alu_result),
         .mem_data(mem_data),
         .writeback_data(writeback_data)
     );
-               
+
+    // ✅ Output WriteData for testbench monitoring
+    assign WriteData = writeback_data;
+
 endmodule
