@@ -5,9 +5,11 @@ module top(
     input wire clk,
     input wire reset
 );
-    wire ResultSrc, MemRead, MemWrite, ALUSrc, RegWrite, Branch, Jump, PCSrc;
+    wire ResultSrc, MemRead, MemWrite, ALUSrc, RegWrite, Branch, Jump;
     wire [1:0] ImmSrc;
     wire [3:0] opcode;
+    wire PCSrc;
+    wire branch_taken;
 
     control_unit cu (
         .opcode(opcode),
@@ -21,6 +23,8 @@ module top(
         .Jump(Jump)
     );
 
+    assign PCSrc = Jump | (Branch & branch_taken); //changes made here
+
     datapath dp (
         .clk(clk),
         .reset(reset),
@@ -32,7 +36,8 @@ module top(
         .RegWrite(RegWrite),
         .Branch(Branch),
         .Jump(Jump),
+        .PCSrc(PCSrc),
         .opcode(opcode),
-        .PCSrc(PCSrc)
+        .branch_taken(branch_taken)
     );
 endmodule
