@@ -11,21 +11,21 @@ module datapath(
     input wire RegWrite,
     input wire Branch,
     input wire Jump,
+    input wire PCSrc,
     output wire [3:0] opcode,
-    output wire PCSrc,
-    output wire [7:0] WriteData   // ✅ Added for testbench
+    output wire branch_taken,
+    output wire [7:0] WriteData
 );
 
     wire [15:0] instruction;
     wire signed [7:0] read_data1, read_data2, alu_in2,
                       alu_result, imm_out, mem_data,
-                      writeback_data; 
+                      writeback_data;
     wire [7:0] PC_out;
-    wire valid, zero, branch_taken;  
+    wire valid, zero;
 
-    assign PCSrc = (Branch & branch_taken) | Jump;
     assign alu_in2 = ALUSrc ? imm_out : read_data2;
-    
+
     fetchinstruction fetch_unit(
         .clk(clk),
         .reset(reset),
@@ -37,11 +37,11 @@ module datapath(
         .PC_out(PC_out),
         .valid(valid)
     );
-    
+
     assign opcode = instruction[15:12];
     reg [2:0] rs1, rs2, rd;
-    
-    always@(*) begin
+
+    always @(*) begin
         rs1 = 3'b0; rs2 = 3'b0; rd = 3'b0;
         case(opcode)
             4'b0000, 4'b0001, 4'b0010,
@@ -64,9 +64,6 @@ module datapath(
             4'b1011, 4'b1100: begin
                 rs1 = instruction[11:9];
                 rs2 = instruction[8:6];
-            end
-            4'b1101, 4'b1110, 4'b1111: begin
-                // No register access needed
             end
         endcase
     end
@@ -116,7 +113,6 @@ module datapath(
         .writeback_data(writeback_data)
     );
 
-    // ✅ Output WriteData for testbench monitoring
     assign WriteData = writeback_data;
 
 endmodule
