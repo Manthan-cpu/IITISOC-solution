@@ -27,6 +27,7 @@ module alu (
       end
 
       4'b1001: result = a + b;                      // ADDI
+      4'b1010: result = b;                          //LDI
       4'b1011: begin                                // BEQ
         result = a - b;
         if (result == 0)
