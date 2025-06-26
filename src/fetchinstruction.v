@@ -21,7 +21,7 @@ input wire clk,
     reg [15:0] instruction_memory [0:255];
 
     initial begin
-        $readmemh("C:/Users/Aryan jain/programs/8-bit-pipelined-microprocessor/8-bit-pipelined-microprocessor.sim/sim_1/behav/xsim/xsim.dir/instruction.mem", instruction_memory);
+        $readmemh("instruction.mem", instruction_memory);
         
     end
 
