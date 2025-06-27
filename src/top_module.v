@@ -1,6 +1,3 @@
-`timescale 1ns / 1ps
-
-
 module top(
     input wire clk,
     input wire reset
@@ -23,7 +20,7 @@ module top(
         .Jump(Jump)
     );
 
-    assign PCSrc = Jump | (Branch & branch_taken); //changes made here
+    assign PCSrc = Jump | (Branch & branch_taken);
 
     datapath dp (
         .clk(clk),
