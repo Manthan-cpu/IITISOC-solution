@@ -21,7 +21,7 @@ module memory_stage(
             data_memory[alu_result] <= write_data;
     end
 
-    // Read is now always active
+    // Read is now always active, only for single cycle case, need to change for pipelined 
     assign read_data = data_memory[alu_result];
 
 endmodule
