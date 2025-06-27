@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 module datapath(
     input wire clk,
     input wire reset,
@@ -10,7 +8,7 @@ module datapath(
     input wire [1:0] ImmSrc,
     input wire RegWrite,
     input wire Branch,
-    input wire Jump,
+    input wire Jump,           
     input wire PCSrc,
     output wire [3:0] opcode,
     output wire branch_taken,
@@ -26,13 +24,15 @@ module datapath(
 
     assign alu_in2 = ALUSrc ? imm_out : read_data2;
 
+    // ✅ UPDATED: Added .Jump(Jump) to enable JMP functionality
     fetchinstruction fetch_unit(
         .clk(clk),
         .reset(reset),
         .stall(1'b0),
         .flush(1'b0),
         .PC_sel(PCSrc),
-        .branch_target(PC_out + imm_out),
+        .Jump(Jump),                               // ✅ Pass jump signal
+        .branch_target(PC_out + imm_out),          // for branch instructions
         .instruction(instruction),
         .PC_out(PC_out),
         .valid(valid)
