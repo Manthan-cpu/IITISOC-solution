@@ -127,9 +127,10 @@ Planned additions:
 
 ## 👥 Contributors
 
-<a href="https://github.com/OWNER/REPO/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=OWNER/REPO" />
-</a>
+1. [Manthan Gupta](https://github.com/Manthan-cpu)
+2. [Ashmita Sharma](https://github.com/ashmita2212)
+3. [Aryan Jain](https://github.com/aryanj1412)
+4. [Om Parekh](https://github.com/Om1903)
 
 ## 📜 License
 
