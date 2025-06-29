@@ -63,14 +63,25 @@ Each instruction is fetched, decoded, executed, and written back in one clock cy
 
 ### 🔹 4. Custom Instruction Set (ISA)
 
-|  Instruction  | 	Description  |  Type  |
-|---|---|---|
-|ADD|	Register addition|	R-type|
-|SUB	|Register subtraction|	R-type|
-|LOAD|	Load from data memory	|I-type|
-|STORE	|Store to data memory	|I-type|
-|JMP	|Unconditional jump	|J-type|
-|BEQ|	Branch if equal	|B-type|
+| Instruction | Description           | Type   |
+| ----------- | --------------------- | ------ |
+| ADD         | Register addition     | R-type |
+| SUB         | Register subtraction  | R-type |
+| AND         | Bitwise AND           | R-type |
+| OR          | Bitwise OR            | R-type |
+| XOR         | Bitwise XOR           | R-type |
+| SLT         | Set if less than      | R-type |
+| SHIFT       | Logical shift         | I-type |
+| LOAD        | Load from data memory | I-type |
+| STORE       | Store to data memory  | I-type |
+| ADDI        | Add immediate         | I-type |
+| LDI         | Load immediate        | I-type |
+| BEQ         | Branch if equal       | I-type |
+| BNE         | Branch if not equal   | I-type |
+| JMP         | Unconditional jump    | J-type |
+| NOP         | No operation          | Other  |
+| HLT         | Halt execution        | Other  |
+
 
 ### 🔹 Separated Instruction and Data Memory
 
