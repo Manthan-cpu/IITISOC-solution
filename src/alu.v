@@ -14,31 +14,28 @@ module alu (
 
   always @(*) begin
     branch_taken = 1'b0;
-    case (opcode)
-      4'b0000: result = a + b;                      // ADD
-      4'b0001: result = a - b;                      // SUB
-      4'b0010: result = a & b;                      // AND
-      4'b0011: result = a | b;                      // OR
-      4'b0100: result = a ^ b;                      // XOR
-      4'b0101: result = (a < b) ? 8'b1 : 8'b0;      // SLT
-      
-      4'b0110: begin                                // SHIFT
-        result = (dir == 1'b0) ? (a << b) : (a >> b);
-      end
+case (opcode)
+  4'b0000: result = a + b;                      // ADD
+  4'b0001: result = a - b;                      // SUB
+  4'b0010: result = a & b;                      // AND
+  4'b0011: result = a | b;                      // OR
+  4'b0100: result = a ^ b;                      // XOR
+  4'b0101: result = (a < b) ? 8'b1 : 8'b0;      // SLT
+  4'b0110: result = (dir == 1'b0) ? (a << b) : (a >> b); // SHIFT
+  4'b0111: result = a + b;                      // LOAD → compute address
+  4'b1000: result = a + b;                      // STORE → compute address
+  4'b1001: result = a + b;                      // ADDI
+  4'b1010: result = b;                          // LDI
+  4'b1011: begin                                // BEQ
+    result = a - b;
+    branch_taken = (result == 0);
+  end
+  4'b1100: begin                                // BNE
+    result = a - b;
+    branch_taken = (result != 0);
+  end
+  default: result = 8'b00000000;                // NOP/HLT
+endcase
 
-      4'b1001: result = a + b;                      // ADDI
-      4'b1010: result = b;                          //LDI
-      4'b1011: begin                                // BEQ
-        result = a - b;
-        if (result == 0)
-          branch_taken = 1;
-      end
-      4'b1100: begin                                // BNE
-        result = a - b;
-        if (result != 0)
-          branch_taken = 1;
-      end
-      default: result = 8'b00000000;                // Default = NOP
-    endcase
   end
 endmodule
