@@ -25,7 +25,7 @@ module Execute(
   wire alu_zero;
   wire alu_branch;
 
-  // Forwarding logic (combinational)
+
   always @(*) begin
     case (forwardA)
       2'b01: operand1 = write_data_wb;
@@ -40,12 +40,12 @@ module Execute(
     endcase
   end
 
-  // ALU second operand selection
+ 
   always @(*) begin
     operand2 = (ALUsrc) ? immediate : intermediate;
   end
 
-  // ALU instantiation (combinational)
+ 
   alu alu_inst (
     .a(operand1),
     .b(operand2),
