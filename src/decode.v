@@ -5,7 +5,7 @@
 module decode(
     input wire clk,
     input wire reset,
-    input wire flush,  // <-- Added flush input
+    input wire flush,  
     input wire [15:0] instruction,
     input wire RegWrite,
     input wire [2:0] write_reg,
