@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module fetch_instruction (
+module fetch789(
     input wire clk,
     input wire reset,
     input wire flush,
@@ -8,11 +8,14 @@ module fetch_instruction (
     input wire [7:0] branch_target,
     input wire jump,
     input wire PC_sel,
+    input wire predict_taken,
 
     output reg [15:0] instruction,
     output reg [7:0] PC_out,
-    output reg valid
+    output reg valid,
+    output reg update
 );
+
     reg [7:0] PC;
     reg halt;
     reg [15:0] instruction_memory [0:255];
@@ -28,25 +31,46 @@ module fetch_instruction (
             instruction <= 16'b0;
             valid <= 1'b0;
             halt <= 1'b0;
+            update <= 1'b0;
         end 
+        
+        
+        
         else if (!stall && !halt) begin
             instruction <= instruction_memory[PC];
             PC_out <= PC;
-
             valid <= ~flush;
+            update <= 0;
 
-            if (instruction[15:12] == 4'b1111)
+
+
+
+            if (instruction_memory[PC][15:12] == 4'b1111)
                 halt <= 1'b1;
 
-            if (jump)
-                PC <= instruction[11:4];  
-            else if (PC_sel || flush)
+            if (jump) begin
+                PC <= instruction_memory[PC][11:4];
+            end
+            else if (PC_sel) begin
                 PC <= branch_target;
-            else
+                update <= 1;
+            end
+            else if (flush) begin
+                PC <= branch_target;
+            end
+            else if (predict_taken) begin
+                PC <= branch_target;
+            end
+            else begin
                 PC <= PC + 1;
+            end
         end 
         else begin
-            valid <= 1'b0; 
+            valid <= 1'b0;
         end
     end
+    
+    
+    
+
 endmodule
