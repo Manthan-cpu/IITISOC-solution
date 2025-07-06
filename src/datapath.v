@@ -24,15 +24,15 @@ module datapath(
 
     assign alu_in2 = ALUSrc ? imm_out : read_data2;
 
-    // ✅ UPDATED: Added .Jump(Jump) to enable JMP functionality
+
     fetchinstruction fetch_unit(
         .clk(clk),
         .reset(reset),
         .stall(1'b0),
         .flush(1'b0),
         .PC_sel(PCSrc),
-        .Jump(Jump),                               // ✅ Pass jump signal
-        .branch_target(PC_out + imm_out),          // for branch instructions
+        .Jump(Jump),                             
+        .branch_target(PC_out + imm_out),         
         .instruction(instruction),
         .PC_out(PC_out),
         .valid(valid)
