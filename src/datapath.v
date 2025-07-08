@@ -1,118 +1,152 @@
-module datapath(
+`timescale 1ns / 1ps
+
+module datapath_pipelined(
     input wire clk,
     input wire reset,
-    input wire ResultSrc,
-    input wire MemRead,
-    input wire MemWrite,
-    input wire ALUSrc,
+    input wire stall,
+    input wire flush,
+    input wire jump,
+    input wire PC_sel,
+    input wire [7:0] branch_target,
     input wire [1:0] ImmSrc,
-    input wire RegWrite,
-    input wire Branch,
-    input wire Jump,           
-    input wire PCSrc,
-    output wire [3:0] opcode,
-    output wire branch_taken,
-    output wire [7:0] WriteData
+    input wire [1:0] forwardA,
+    input wire [1:0] forwardB,
+    input wire ALUsrc,
+    input wire MemRead_MEM,
+    input wire MemWrite_MEM,
+    input wire RegWrite_WB,
+    input wire ResultSrc_MEM,
+    input wire RegWrite_MEM,
+    input wire [3:0] opcode,
+    input wire dir,
+
+    output wire [7:0] PC_out_IF,
+    output wire [15:0] instruction_IF,
+    output wire predict_taken,
+    output wire flush_out,
+    output wire update
 );
 
-    wire [15:0] instruction;
-    wire signed [7:0] read_data1, read_data2, alu_in2,
-                      alu_result, imm_out, mem_data,
-                      writeback_data;
-    wire [7:0] PC_out;
-    wire valid, zero;
+    wire [15:0] instruction_ID;
+    wire signed [7:0] read_data1_ID, read_data2_ID;
+    wire signed [7:0] imm_out_ID;
+    wire [2:0] rs1_ID, rs2_ID, rd_ID;
 
-    assign alu_in2 = ALUSrc ? imm_out : read_data2;
+    wire signed [7:0] alu_result_EX;
+    wire zero_EX, branch_taken_EX;
 
+    wire signed [7:0] alu_result_MEM, mem_data_WB, alu_result_WB;
+    wire [2:0] rd_MEM, rd_WB, rd_final;
+    wire [7:0] write_data_WB;
+    wire RegWrite_final;
+    wire ResultSrc_WB;
 
-    fetchinstruction fetch_unit(
+    fetch789 fetch_stage (
         .clk(clk),
         .reset(reset),
-        .stall(1'b0),
-        .flush(1'b0),
-        .PC_sel(PCSrc),
-        .Jump(Jump),                             
-        .branch_target(PC_out + imm_out),         
-        .instruction(instruction),
-        .PC_out(PC_out),
-        .valid(valid)
+        .flush(flush),
+        .stall(stall),
+        .branch_target(branch_target),
+        .jump(jump),
+        .PC_sel(PC_sel),
+        .predict_taken(predict_taken),
+        .instruction(instruction_IF),
+        .PC_out(PC_out_IF),
+        .valid(),
+        .update(update)
     );
 
-    assign opcode = instruction[15:12];
-    reg [2:0] rs1, rs2, rd;
-
-    always @(*) begin
-        rs1 = 3'b0; rs2 = 3'b0; rd = 3'b0;
-        case(opcode)
-            4'b0000, 4'b0001, 4'b0010,
-            4'b0011, 4'b0100, 4'b0101: begin
-                rs1 = instruction[11:9];
-                rs2 = instruction[8:6];
-                rd = instruction[5:3];
-            end
-            4'b0110, 4'b0111, 4'b1001: begin
-                rs1 = instruction[8:6];
-                rd = instruction[11:9];
-            end
-            4'b1000: begin
-                rs1 = instruction[8:6];
-                rs2 = instruction[11:9];
-            end
-            4'b1010: begin
-                rd = instruction[11:9];
-            end
-            4'b1011, 4'b1100: begin
-                rs1 = instruction[11:9];
-                rs2 = instruction[8:6];
-            end
-        endcase
-    end
-
-    register_file reg_file (
+  
+    control_hazard control_hazard_unit (
+        .branch_target(branch_target),
         .clk(clk),
         .reset(reset),
-        .RegWrite(RegWrite),
-        .read_reg1(rs1),
-        .read_reg2(rs2),
-        .write_reg(rd),
-        .write_data(writeback_data),
-        .read_data1(read_data1),
-        .read_data2(read_data2)
+        .instruction_memory(instruction_IF),
+        .update(update),
+        .actual_taken(branch_taken_EX),
+        .PC_out(PC_out_IF),
+        .predict_taken(predict_taken),
+        .flush(flush_out)
     );
 
-    immediate_generator imm_gen(
-        .instruction(instruction),
+   
+    decode decode_stage (
+        .clk(clk),
+        .reset(reset),
+        .flush(flush_out),
+        .instruction(instruction_IF),
+        .RegWrite(RegWrite_final),
+        .write_reg(rd_final),
+        .write_data(write_data_WB),
         .ImmSrc(ImmSrc),
-        .imm_out(imm_out)
+        .read_data1(read_data1_ID),
+        .read_data2(read_data2_ID),
+        .imm_out(imm_out_ID),
+        .rs1(rs1_ID),
+        .rs2(rs2_ID),
+        .rd(rd_ID)
     );
 
-    alu alu(
-        .a(read_data1),
-        .b(alu_in2),
-        .opcode(opcode),
-        .dir(instruction[0]),
-        .result(alu_result),
-        .zero(zero),
-        .branch_taken(branch_taken)
-    );
-
-    memory_stage mem_stage(
+  
+    Execute execute_stage (
         .clk(clk),
         .reset(reset),
-        .MemRead(MemRead),
-        .MemWrite(MemWrite),
-        .alu_result(alu_result),
-        .write_data(read_data2),
-        .read_data(mem_data)
+        .flush(flush_out),
+        .reg1(read_data1_ID),
+        .reg2(read_data2_ID),
+        .immediate(imm_out_ID),
+        .ALUsrc(ALUsrc),
+        .dir(dir),
+        .opcode(opcode),
+        .forwardA(forwardA),
+        .forwardB(forwardB),
+        .alu_result_mem(alu_result_MEM),
+        .write_data_wb(write_data_WB),
+        .alu_result(alu_result_EX),
+        .zero(zero_EX),
+        .branch_taken(branch_taken_EX)
     );
 
-    writeback_stage wb_stage(
-        .ResultSrc(ResultSrc),
-        .alu_result(alu_result),
-        .mem_data(mem_data),
-        .writeback_data(writeback_data)
+
+    data_memory_hazard hazard_unit (
+        .EX_MEM_regwrite(RegWrite_MEM),
+        .EX_MEM_rd(rd_MEM),
+        .MEM_WB_regwrite(RegWrite_WB),
+        .MEM_WB_rd(rd_WB),
+        .rs1(rs1_ID),
+        .rs2(rs2_ID),
+        .clk(clk),
+        .forward_A(forwardA),
+        .forward_B(forwardB)
     );
 
-    assign WriteData = writeback_data;
+    stage_MEM mem_stage (
+        .clk(clk),
+        .reset(reset),
+        .MemRead_MEM(MemRead_MEM),
+        .MemWrite_MEM(MemWrite_MEM),
+        .ResultSrc_MEM(ResultSrc_MEM),
+        .RegWrite_MEM(RegWrite_MEM),
+        .rd_MEM(rd_ID),
+        .alu_result_MEM(alu_result_EX),
+        .write_data_MEM(read_data2_ID),
+        .mem_data_out(mem_data_WB),
+        .alu_result_out(alu_result_MEM),
+        .ResultSrc_WB(ResultSrc_WB),
+        .RegWrite_WB(RegWrite_WB),
+        .rd_WB(rd_WB)
+    );
+
+   
+    stage_WB writeback_stage (
+        .RegWrite_WB(RegWrite_WB),
+        .ResultSrc_WB(ResultSrc_WB),
+        .alu_result_WB(alu_result_MEM),
+        .mem_data_WB(mem_data_WB),
+        .rd_WB(rd_WB),
+        .RegWrite_final(RegWrite_final),
+        .write_data_WB(write_data_WB),
+        .rd_final(rd_final)
+    );
 
 endmodule
