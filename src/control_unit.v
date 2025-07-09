@@ -2,6 +2,7 @@
 
 module control_unit(
     input wire [3:0] opcode,
+    input wire stall,
     output reg ResultSrc,
     output reg MemRead,
     output reg MemWrite,
@@ -17,6 +18,8 @@ module control_unit(
         ALUSrc = 0; ImmSrc = 2'b11; RegWrite = 0;
         Branch = 0; Jump = 0;
         
+        
+        if(!stall)begin
         case (opcode)
         
             4'b0000, 4'b0001, 4'b0010,
@@ -35,11 +38,11 @@ module control_unit(
                 MemWrite = 1; ALUSrc = 1; ImmSrc = 2'b01;
             end
             
-           4'b1001: begin // ADDI
+           4'b1001: begin 
     ALUSrc = 1; ImmSrc = 2'b01; RegWrite = 1;
 end
 
-4'b1010: begin // LDI
+4'b1010: begin
     ALUSrc = 1; ImmSrc = 2'b00; RegWrite = 1;
 end
            4'b1011, 4'b1100: begin
@@ -55,4 +58,6 @@ end
         
         endcase
     end  
+    end
 endmodule
+
