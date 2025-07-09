@@ -55,11 +55,17 @@ module Execute(
     );
 
     always @(posedge clk or posedge reset) begin
-        if (reset || flush) begin
+        if (reset ) begin
             alu_result   <= 8'd0;
             zero         <= 1'b0;
             branch_taken <= 1'b0;
-        end else begin
+        end 
+        else if(flush)begin
+            alu_result   <= 8'd0;
+            zero         <= 1'b0;
+            branch_taken <= alu_branch;
+        end
+        else begin
             alu_result   <= alu_out;
             zero         <= alu_zero;
             branch_taken <= alu_branch;
