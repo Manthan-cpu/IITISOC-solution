@@ -3,6 +3,7 @@
 module control_unit(
     input wire [3:0] opcode,
     input wire stall,
+    input wire flush,
     output reg ResultSrc,
     output reg MemRead,
     output reg MemWrite,
@@ -19,7 +20,7 @@ module control_unit(
         Branch = 0; Jump = 0;
         
         
-        if(!stall)begin
+        if(!stall && !flush)begin
         case (opcode)
         
             4'b0000, 4'b0001, 4'b0010,
