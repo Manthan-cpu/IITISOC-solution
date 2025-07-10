@@ -41,15 +41,23 @@ def assembler(input_file, output_file):
             binary = opcodes[opcode]
             
             try:
-                if opcode in ['ADD', 'SUB', 'AND', 'OR', 'XOR', 'SLT']:
+                if opcode in ['ADD', 'SUB', 'SLT']:
                     if len(parts) != 5:
-                        raise ValueError(f"{opcode} requires format: {opcode}, Rd, Rs1, Rs2, U/S")
-                    dest = parse_register(parts[1])  
-                    src1 = parse_register(parts[2])  
-                    src2 = parse_register(parts[3])  
+                        raise ValueError(f"{opcode} requires format: {opcode}, Rs1, Rs2, Rd, U/S")
+                    src1 = parse_register(parts[1])  
+                    src2 = parse_register(parts[2])  
+                    dest = parse_register(parts[3])  
                     is_unsigned = '1' if parts[4].upper() == 'U' else '0'
-                    binary += to_binary(dest, 3) + to_binary(src1, 3) + to_binary(src2, 3) + is_unsigned + '00'
+                    binary += to_binary(src1, 3) + to_binary(src2, 3) + to_binary(dest, 3) + is_unsigned + '00'
                 
+                elif opcode in ['AND', 'OR', 'XOR']:
+                    if len(parts) != 4:
+                        raise ValueError(f"{opcode} requires format: {opcode}, Rs1, Rs2, Rd")
+                    src1 = parse_register(parts[1])  
+                    src2 = parse_register(parts[2])  
+                    dest = parse_register(parts[3])
+                    binary += to_binary(src1, 3) + to_binary(src2, 3) + to_binary(dest, 3) + '000'
+
                 elif opcode == 'SHIFT':
                     if len(parts) != 6:
                         raise ValueError(f"SHIFT requires format: SHIFT, Rd, Rs, Shamt, L/R, U/S")
@@ -78,8 +86,6 @@ def assembler(input_file, output_file):
                     dest = parse_register(parts[1])
                     src = parse_register(parts[2])
                     imm = int(parts[3])
-                    if imm > 31 or imm < -32:
-                        raise ValueError(f"Immediate {imm} out of range (-64 to 63)")
                     is_unsigned = '1' if parts[4].upper() == 'U' else '0'
                     binary += to_binary(dest, 3) + to_binary(src, 3) + to_binary(imm, 5) + is_unsigned
                 
@@ -135,7 +141,7 @@ def assembler(input_file, output_file):
 
 if __name__ == "__main__":
     input_file = "program.txt"
-    output_file = "instruction.txt"
+    output_file = "instruction.mem"
     try:
         assembler(input_file, output_file)
         print(f"Assembly complete. Machine code written to {output_file}")
@@ -143,4 +149,3 @@ if __name__ == "__main__":
         print(f"Error: Input file {input_file} not found")
     except Exception as e:
         print(f"Error: {e}")
-      
