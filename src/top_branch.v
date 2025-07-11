@@ -90,7 +90,7 @@ module top_microprocessor(
         .stall(stall),
         .flush(flush_out),
         .jump(Jump_reg),
-        .PC_sel(Branch_reg), // PC_sel can be driven by Branch
+        .PC_sel(Branch_reg), 
         .branch_target(branch_target_reg),
         .ImmSrc(ImmSrc_reg),
         .ALUsrc(ALUsrc_reg),
