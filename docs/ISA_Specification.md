@@ -2,7 +2,7 @@
 |---|---|---|
 
 |ADD	    |       0000	  |  Opcode(4), Src1(3), Src2(3), Dest(3), is_unsigned(1), Unused(2)|
-
+|---|---|---|
 |SUB	     |      0001	|    Opcode(4), Src1(3), Src2(3), Dest(3), is_unsigned(1), Unused(2)|
 
 |AND	     |      0010	   | Opcode(4), Src1(3), Src2(3), Dest(3), Unused(3)|
