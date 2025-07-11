@@ -6,7 +6,7 @@ module top_branch_pipeline(
     input actual_taken
 );
 
-    // Fetch/Control wires
+    
     wire [7:0] PC_out, branch_target;
     wire [15:0] instruction;
     wire flush, predict_taken, valid, update;
@@ -14,8 +14,8 @@ module top_branch_pipeline(
     // Decode wires
     wire [7:0] write_data;  
     wire [2:0] write_reg;   
-    wire RegWrite = 0;            // Not used yet (set to 0)
-    wire [1:0] ImmSrc = 2'b00;    // Example immediate source
+    wire RegWrite = 0;           
+    wire [1:0] ImmSrc = 2'b00;    
 
     wire signed [7:0] read_data1, read_data2;
     wire signed [7:0] imm_out;
