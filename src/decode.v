@@ -14,7 +14,7 @@ module decode(
 
     output wire signed [7:0] read_data1,
     output wire signed [7:0] read_data2,
-    output reg signed [7:0] imm_out,
+    output wire signed [7:0] imm_out,
     output wire [2:0] rs1, rs2, rd
 );
 
