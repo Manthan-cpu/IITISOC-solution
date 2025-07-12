@@ -109,13 +109,12 @@ def assembler(input_file, output_file):
                     binary += to_binary(src1, 3) + to_binary(src2, 3) + to_binary(offset, 6)
                 
                 elif opcode == 'JMP':
-                    if len(parts) != 3:
-                        raise ValueError(f"JMP requires format: JMP, Addr, U/S")
+                    if len(parts) != 2:
+                        raise ValueError(f"JMP requires format: JMP, Addr")
                     addr = int(parts[1])
                     if addr > 255 or addr < -256:
                         raise ValueError(f"Address {addr} out of range (-256 to 255)")
-                    is_unsigned = '1' if parts[2].upper() == 'U' else '0'
-                    binary += to_binary(addr, 8) + is_unsigned + '000'
+                    binary += to_binary(addr, 8) + '0000'
                 
                 elif opcode in ['NOP', 'HLT']:
                     if len(parts) != 1 and (len(parts) != 2 or parts[1] != ''):
