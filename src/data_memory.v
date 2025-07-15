@@ -5,9 +5,9 @@ module memory_stage (
     input wire        reset,
     input wire        MemRead,
     input wire        MemWrite,
-    input wire [7:0]  alu_result,           // Effective memory address
-    input wire [7:0]  write_data,           // Data to store 
-    output reg [7:0]  read_data             // Data loaded from memory 
+    input wire [7:0]  alu_result,           
+    input wire [7:0]  write_data,         
+    output reg [7:0]  read_data             
 );
     reg [7:0] data_memory [0:255];
     integer i;
