@@ -40,7 +40,7 @@ module control_unit(
             end
             
            4'b1001: begin 
-    ALUSrc = 1; ImmSrc = 2'b01; RegWrite = 1;
+    ALUSrc = 1; ImmSrc = 2'b11; RegWrite = 1;
 end
 
 4'b1010: begin
