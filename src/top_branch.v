@@ -106,7 +106,7 @@ module top_microprocessor(
         .predict_taken(predict_taken),
         .flush_out(flush_out),
         .update(update),
-        .halt(halt)  // <- from fetch
+        .halt(halt)  
     );
 
 endmodule
