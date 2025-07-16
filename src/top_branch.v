@@ -2,18 +2,7 @@
 
 module top_microprocessor(
     input wire clk,
-    input wire reset,
-
-    output wire [7:0] PC_out_IF,
-    output wire [15:0] instruction_IF,
-    output reg RegWrite_MEM_reg,
-    output reg MemRead_MEM_reg,
-    output reg MemWrite_MEM_reg,
-    output reg ResultSrc_MEM_reg,
-    output reg ALUsrc_reg,
-    output reg [1:0] ImmSrc_reg,
-    output wire stall,
-    output wire halt
+    input wire reset
 );
 
     wire flush_out, jump, PC_sel, ALUsrc;
@@ -24,8 +13,14 @@ module top_microprocessor(
     wire [3:0] opcode_wire;
     wire dir;
     wire predict_taken, update;
+    wire stall;
+    wire halt;
+    wire [15:0] instruction_IF;
 
+    reg ResultSrc_MEM_reg, RegWrite_MEM_reg, MemRead_MEM_reg, MemWrite_MEM_reg;
     reg ResultSrc_WB_reg, RegWrite_WB_reg;
+    reg ALUsrc_reg;
+    reg [1:0] ImmSrc_reg;
     reg Branch_reg, Jump_reg, dir_reg;
     reg [3:0] opcode_reg;
     reg [7:0] branch_target_reg;
@@ -101,12 +96,11 @@ module top_microprocessor(
         .RegWrite_WB(RegWrite_WB_reg),
         .opcode(opcode_reg),
         .dir(dir_reg),
-        .PC_out_IF(PC_out_IF),
-        .instruction_IF(instruction_IF),
         .predict_taken(predict_taken),
         .flush_out(flush_out),
         .update(update),
-        .halt(halt)  
+        .halt(halt),
+        .instruction_IF(instruction_IF)
     );
 
 endmodule
