@@ -2,35 +2,36 @@
 
 module top_microprocessor(
     input wire clk,
-    input wire reset
+    input wire reset,
+
+    output wire [7:0] PC_out_IF,
+    output wire [15:0] instruction_IF,
+    output reg RegWrite_MEM_reg,
+    output reg MemRead_MEM_reg,
+    output reg MemWrite_MEM_reg,
+    output reg ResultSrc_MEM_reg,
+    output reg ALUsrc_reg,
+    output reg [1:0] ImmSrc_reg,
+    output wire stall,
+    output wire halt
 );
 
-  
-    wire stall, flush, jump, PC_sel, ALUsrc, MemRead_MEM, MemWrite_MEM;
-    wire RegWrite_MEM, ResultSrc_MEM, RegWrite_WB, dir;
+    wire flush_out, jump, PC_sel, ALUsrc;
+    wire MemRead, MemWrite, RegWrite, ResultSrc, Branch, Jump;
+    wire RegWrite_WB;
     wire [7:0] branch_target;
     wire [1:0] ImmSrc;
-    wire [3:0] opcode;
+    wire [3:0] opcode_wire;
+    wire dir;
+    wire predict_taken, update;
 
-   
-    wire [7:0] PC_out_IF;
-    wire [15:0] instruction_IF;
-    wire predict_taken, flush_out, update;
-
-   
-    wire ResultSrc, MemRead, MemWrite, RegWrite, Branch, Jump;
-    
-  
-    reg ResultSrc_MEM_reg, MemRead_MEM_reg, MemWrite_MEM_reg, RegWrite_MEM_reg, ResultSrc_WB_reg, RegWrite_WB_reg;
-    reg [1:0] ImmSrc_reg;
-    reg ALUsrc_reg, Branch_reg, Jump_reg, dir_reg;
+    reg ResultSrc_WB_reg, RegWrite_WB_reg;
+    reg Branch_reg, Jump_reg, dir_reg;
     reg [3:0] opcode_reg;
-
-  
     reg [7:0] branch_target_reg;
-    
+
     control_unit control_unit_inst (
-        .opcode(opcode),
+        .opcode(opcode_wire),
         .stall(stall),
         .flush(flush_out),
         .ResultSrc(ResultSrc),
@@ -43,7 +44,6 @@ module top_microprocessor(
         .Jump(Jump)
     );
 
- 
     always @(posedge clk or posedge reset) begin
         if (reset || flush_out) begin
             ResultSrc_MEM_reg <= 0;
@@ -66,13 +66,12 @@ module top_microprocessor(
             ALUsrc_reg        <= ALUsrc;
             Branch_reg        <= Branch;
             Jump_reg          <= Jump;
-            dir_reg           <= dir;
-            opcode_reg        <= opcode;
+            dir_reg           <= instruction_IF[2];
+            opcode_reg        <= opcode_wire;
             branch_target_reg <= branch_target;
         end
     end
 
-  
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             ResultSrc_WB_reg <= 0;
@@ -83,14 +82,15 @@ module top_microprocessor(
         end
     end
 
-  
+    assign opcode_wire = instruction_IF[15:12];
+
     datapath_pipelined datapath (
         .clk(clk),
         .reset(reset),
         .stall(stall),
         .flush(flush_out),
         .jump(Jump_reg),
-        .PC_sel(Branch_reg), 
+        .PC_sel(Branch_reg),
         .branch_target(branch_target_reg),
         .ImmSrc(ImmSrc_reg),
         .ALUsrc(ALUsrc_reg),
@@ -105,9 +105,8 @@ module top_microprocessor(
         .instruction_IF(instruction_IF),
         .predict_taken(predict_taken),
         .flush_out(flush_out),
-        .update(update)
+        .update(update),
+        .halt(halt)  // <- from fetch
     );
-
-   
 
 endmodule
