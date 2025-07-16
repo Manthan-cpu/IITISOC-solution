@@ -3,7 +3,7 @@
 module datapath_pipelined(
     input wire clk,
     input wire reset,
-    input wire stall,
+    output wire stall,
     input wire flush,
     input wire jump,
     input wire PC_sel,
@@ -22,18 +22,16 @@ module datapath_pipelined(
     output wire [15:0] instruction_IF,
     output wire predict_taken,
     output wire flush_out,
-    output wire update
+    output wire update,
+    output wire halt       
 );
 
     wire signed [7:0] read_data1_ID, read_data2_ID;
     wire signed [7:0] imm_out_ID;
     wire [2:0] rs1_ID, rs2_ID, rd_ID;
-
-    wire signed [7:0] operand1_EX, operand2_EX;
     wire signed [7:0] alu_result_EX;
     wire zero_EX, branch_taken_EX;
-
-    wire signed [7:0] mem_data_WB, alu_result_MEM, alu_result_WB;
+    wire signed [7:0] mem_data_WB, alu_result_MEM;
     wire [2:0] rd_EX, rd_MEM, rd_WB, rd_final;
     wire [7:0] write_data_WB;
     wire RegWrite_final;
@@ -41,12 +39,25 @@ module datapath_pipelined(
     wire [1:0] forwardA, forwardB;
     wire valid_IF;
 
-  
+    wire stall_internal;
+    wire halt_fetch;
+
+    assign stall = stall_internal;
+    assign halt = halt_fetch;
+
+    hazard_detection_unit hazard_unit (
+        .rs1_ID(rs1_ID),
+        .rs2_ID(rs2_ID),
+        .rd_EX(rd_EX),
+        .MemRead_EX(MemRead_MEM),
+        .stall(stall_internal)
+    );
+
     fetch789 fetch_stage (
         .clk(clk),
         .reset(reset),
         .flush(flush),
-        .stall(stall),
+        .stall(stall_internal),
         .branch_target(branch_target),
         .jump(jump),
         .PC_sel(PC_sel),
@@ -54,7 +65,8 @@ module datapath_pipelined(
         .instruction(instruction_IF),
         .PC_out(PC_out_IF),
         .valid(valid_IF),
-        .update(update)
+        .update(update),
+        .halt(halt_fetch)     
     );
 
     control_hazard control_hazard_unit (
@@ -69,7 +81,6 @@ module datapath_pipelined(
         .flush(flush_out)
     );
 
-   
     decode decode_stage (
         .clk(clk),
         .reset(reset),
@@ -87,7 +98,6 @@ module datapath_pipelined(
         .rd(rd_ID)
     );
 
-    // === PIPELINE REGISTER: ID/EX ===
     reg signed [7:0] reg1_EX, reg2_EX, imm_EX;
     reg [2:0] rs1_EX, rs2_EX;
     reg [2:0] rd_EX_reg;
@@ -105,7 +115,7 @@ module datapath_pipelined(
             opcode_EX <= 0;
             ALUsrc_EX <= 0;
             dir_EX <= 0;
-        end else if (!stall) begin
+        end else if (!stall_internal) begin
             reg1_EX <= read_data1_ID;
             reg2_EX <= read_data2_ID;
             imm_EX <= imm_out_ID;
@@ -118,6 +128,7 @@ module datapath_pipelined(
         end
     end
 
+    assign rd_EX = rd_EX_reg;
 
     Execute execute_stage (
         .clk(clk),
@@ -138,10 +149,7 @@ module datapath_pipelined(
         .branch_taken(branch_taken_EX)
     );
 
-    assign rd_EX = rd_EX_reg;
-
- 
-    data_memory_hazard hazard_unit (
+    data_memory_hazard forward_unit (
         .EX_MEM_regwrite(RegWrite_MEM),
         .EX_MEM_rd(rd_MEM),
         .MEM_WB_regwrite(RegWrite_WB),
@@ -154,18 +162,15 @@ module datapath_pipelined(
     );
 
     reg [2:0] rd_MEM_reg;
-
     always @(posedge clk or posedge reset) begin
-        if (reset) begin
+        if (reset)
             rd_MEM_reg <= 0;
-        end else begin
+        else
             rd_MEM_reg <= rd_EX;
-        end
     end
 
     assign rd_MEM = rd_MEM_reg;
 
-    
     stage_MEM mem_stage (
         .clk(clk),
         .reset(reset),
@@ -183,7 +188,6 @@ module datapath_pipelined(
         .rd_WB(rd_WB)
     );
 
-   
     stage_WB writeback_stage (
         .RegWrite_WB(RegWrite_WB),
         .ResultSrc_WB(ResultSrc_WB),
