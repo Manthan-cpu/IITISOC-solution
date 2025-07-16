@@ -1,67 +1,74 @@
+# 🧠 8-bit Pipelined Microprocessor – IITISoC 2025
 
-# 🧠 8-bit Microprocessor – IITISoC 2025
-
-This repository contains the Verilog-based implementation of an 8-bit microprocessor, developed as part of the IIT Indore Summer of Code (IITISoC) 2024. The current version is a single-cycle processor designed for the mid evaluation, with a pipelined version planned for the final evaluation.
+This repository contains a Verilog-based implementation of an 8-bit pipelined microprocessor, developed as part of the **IIT Indore Summer of Code (IITISoC) 2025**. The initial version was a single-cycle processor submitted for the mid evaluation. The current version is a fully functional **5-stage pipelined processor** with data and control hazard resolution.
 
 ## 📌 Overview
 
-This project implements a custom 8-bit processor architecture from scratch, with basic instruction execution, modular design, and simulation testbenches. It provides hands-on understanding of processor datapaths, instruction decoding, memory interaction, and control logic.
-
-The processor follows a RISC-style architecture, using a simple instruction set, separate instruction/data memory, and a modular Verilog HDL structure. It is designed for clarity, educational use, and future extensibility to pipelining.
+This project implements a custom 8-bit RISC-style processor from scratch, covering instruction fetch, decode, execution, memory access, and write-back stages. The design emphasizes clarity, modularity, and hands-on learning of computer architecture principles.
 
 ## 📂 Repository Structure
 
-```
-📦IITISoc-solution 
-├─ LICENSE
-├─ README.md
-├─ docs
-│  ├─ Architecture_Diagram.jpg
-│  └─ ISA_Specification
-├─ sim
-│  ├─ instruction.mem
-│  └─ testbench.v
-└─ src
-   ├─ alu.v
-   ├─ control_unit.v
-   ├─ data_memory.v
-   ├─ datapath.v
-   ├─ fetchinstruction.v
-   ├─ immediate_generator.v
-   ├─ register_file.v
-   ├─ top_module.v
-   └─ write_back.v
-```
-## ✅ Features 
+📦IITISoC-solution
+├─ LICENSE
+├─ README.md
+├─ docs
+│ ├─ Architecture_Diagram.jpg
+│ └─ ISA_Specification
+├─ sim
+│ ├─ instructions.mem
+│ └─ testbench.v
+└─ src
+├─ alu.v
+├─ control_unit.v
+├─ control_hazard.v
+├─ data_memory.v
+├─ datapath_pipelined.v
+├─ decode.v
+├─ execute.v
+├─ fetch789.v
+├─ hazard_detection_unit.v
+├─ immediate_generator.v
+├─ register_file.v
+├─ stage_MEM.v
+├─ stage_WB.v
+├─ top_microprocessor.v
+└─ write_back.v
 
-### 🔹 8-bit Architecture
+markdown
+Copy
+Edit
 
-All registers, memory units, and the ALU operate on 8-bit wide data, making it ideal for beginner CPU design while demonstrating all key architectural elements.
+## ✅ Features
 
-### 🔹 Single-Cycle Execution
+### 🔹 8-bit RISC Architecture
 
-Each instruction is fetched, decoded, executed, and written back in one clock cycle.
-1. Simplifies control logic
+- 8-bit wide data path  
+- 3-bit register addresses (8 general-purpose registers)  
+- Modular, beginner-friendly design  
 
-2. Enables easy debugging
+### 🔹 5-Stage Pipelining
 
-3. Tradeoff: less efficient than pipelined architectures
+Implements a classic 5-stage instruction pipeline:
 
-### 🔹 Modular Verilog Design
+1. **IF** – Instruction Fetch  
+2. **ID** – Instruction Decode  
+3. **EX** – Execute  
+4. **MEM** – Memory Access  
+5. **WB** – Write Back  
 
-1. ALU: Performs arithmetic (ADD, SUB) and logic operations
+Includes:
 
-2. Register File: 8-bit general-purpose registers with dual-read and single-write support
+- Pipeline registers between stages  
+- Data forwarding and hazard detection  
+- Control hazard resolution with flushing  
+- Basic static branch prediction  
 
-3. Control Unit: Decodes opcode, generates control signals (RegWrite, ALUSrc, MemRead, etc.)
+### 🔹 Harvard Architecture
 
-4. Datapath: Connects all components; manages data movement
+- **Instruction Memory** (ROM-like): Stores program instructions  
+- **Data Memory** (RAM-like): For runtime LOAD/STORE operations  
 
-5. Instruction Memory: Stores program instructions (ROM-like)
-
-6. Data Memory: Handles LOAD and STORE operations (RAM-like)
-
-### 🔹 4. Custom Instruction Set (ISA)
+### 🔹 Custom Instruction Set (ISA)
 
 | Instruction | Description           | Type   |
 | ----------- | --------------------- | ------ |
@@ -72,77 +79,44 @@ Each instruction is fetched, decoded, executed, and written back in one clock cy
 | XOR         | Bitwise XOR           | R-type |
 | SLT         | Set if less than      | R-type |
 | SHIFT       | Logical shift         | I-type |
-| LOAD        | Load from data memory | I-type |
-| STORE       | Store to data memory  | I-type |
+| LOAD        | Load from memory      | I-type |
+| STORE       | Store to memory       | I-type |
 | ADDI        | Add immediate         | I-type |
 | LDI         | Load immediate        | I-type |
 | BEQ         | Branch if equal       | I-type |
 | BNE         | Branch if not equal   | I-type |
 | JMP         | Unconditional jump    | J-type |
 | NOP         | No operation          | Other  |
-| HLT         | Halt execution        | Other  |
+| HLT         | Halt processor        | Other  |
 
+### 🔹 Hazard Handling
 
-### 🔹 Separated Instruction and Data Memory
+- **Data Hazard Unit**: Stalls pipeline or forwards values when necessary  
+- **Control Hazard Unit**: Flushes mispredicted instructions  
+- **Forwarding Logic**: Minimizes stalls due to RAW hazards  
 
-Follows Harvard architecture:
-1. Instruction Memory – read-only memory with program code
+### 🔹 Simulation and Debugging Support
 
-2. Data Memory – used by LOAD/STORE instructions for data storage
-
-### 🔹 Testbench and Simulation Support
-
-A testbench.v testbench is provided for simulation:
-
-1. Applies clock and reset
-
-2. Loads test instructions into memory
-
-3. Verifies correct behavior of processor
-
-4. Compatible with tools like Icarus Verilog and GTKWave
-
-### 🔹 Designed for Pipelining (Final Phase)
-
-The architecture is planned to evolve into a 5-stage pipelined processor:
-
-1. IF: Instruction Fetch
-
-2. ID: Instruction Decode
-
-3. EX: Execute
-
-4. MEM: Memory Access
-
-5. WB: Write Back
-
-Planned additions:
-
-1. Hazard detection and forwarding
-
-2. Pipeline registers
-
-3. Control and data hazard resolution
+- Fully functional Verilog testbench  
+- Clock/reset logic and simulation control  
+- Displays PC, instruction, register values, memory, and control signals  
+- Integrated HALT mechanism for clean simulation termination  
+- Compatible with Icarus Verilog and GTKWave for waveform inspection
 
 ## 🚧 Planned Enhancements
 
-✅ Convert to 5-stage pipelined processor
-
-✅ Add branching and jump support with hazard resolution
-
-✅ Implement new instructions (e.g., logical operations)
-
-✅ Develop assembler or loader for custom binary programs
-
-✅ Extend test cases and benchmarking
+- [ ] Build an assembler for `.asm` to binary conversion  
+- [ ] Add new instructions (e.g., MUL, DIV)  
+- [ ] More test cases and edge condition validation  
+- [ ] Performance benchmarking and pipeline visualization  
 
 ## 👥 Contributors
 
-1. [Manthan Gupta](https://github.com/Manthan-cpu)
-2. [Ashmita Sharma](https://github.com/ashmita2212)
-3. [Aryan Jain](https://github.com/aryanj1412)
-4. [Om Parekh](https://github.com/Om1903)
+- [Manthan Gupta](https://github.com/Manthan-cpu)  
+- [Ashmita Sharma](https://github.com/ashmita2212)  
+- [Aryan Jain](https://github.com/aryanj1412)  
+- [Om Parekh](https://github.com/Om1903)
 
 ## 📜 License
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the **MIT License**. See the `LICENSE` file for more information.
