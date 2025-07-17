@@ -30,14 +30,47 @@ module top_tb;
 
     always @(posedge clk) begin
         $display("Time=%0t ns", $time);
+        $display("================ PIPELINE STATE ================");
+        // FETCH STAGE
+        $display("[FETCH]   PC=%0h | Instr=%h | Opcode=%b",
+            uut.datapath.fetch_stage.PC_out,
+            uut.datapath.fetch_stage.instruction,
+            uut.datapath.fetch_stage.instruction[15:12]);
 
-        // Instruction and PC from fetch stage
-        $display("PC     = %0h", uut.datapath.fetch_stage.PC_out);
-        $display("Instr  = %h", uut.datapath.fetch_stage.instruction);
-        $display("Opcode = %b", uut.datapath.fetch_stage.instruction[15:12]);
+        // DECODE STAGE
+        $display("[DECODE]  PC=%0h | Instr=%h | Opcode=%b | rs1=%0d | rs2=%0d | rd=%0d",
+            uut.datapath.decode_stage.PC_out, // If available
+            uut.datapath.decode_stage.instruction, // If available
+            uut.datapath.decode_stage.instruction[15:12], // If available
+            uut.datapath.decode_stage.rs1,
+            uut.datapath.decode_stage.rs2,
+            uut.datapath.decode_stage.rd);
+        $display("          read_data1=%0d | read_data2=%0d | imm_out=%0d",
+            uut.datapath.decode_stage.read_data1,
+            uut.datapath.decode_stage.read_data2,
+            uut.datapath.decode_stage.imm_out);
+
+        // EXECUTE STAGE
+        $display("[EXECUTE] ALU Result=%0h | Zero=%b | branch_taken=%b",
+            uut.datapath.execute_stage.alu_result,
+            uut.datapath.execute_stage.zero,
+            uut.datapath.execute_stage.branch_taken);
+
+        // MEMORY STAGE
+        $display("[MEM]     Mem[0]=%0h | Mem[1]=%0h | Mem[10]=%0h | mem_data=%0h",
+            uut.datapath.mem_stage.data_mem.data_memory[0],
+            uut.datapath.mem_stage.data_mem.data_memory[1],
+            uut.datapath.mem_stage.data_mem.data_memory[10],
+            uut.datapath.mem_stage.mem_data);
+
+        // WRITE-BACK STAGE
+        $display("[WB]      write_data=%0h | RegWrite=%b | rd=%0d",
+            uut.datapath.writeback_stage.write_data_WB,
+            uut.datapath.writeback_stage.RegWrite_final,
+            uut.datapath.writeback_stage.rd_final);
 
         // Register file contents
-        $display("Regs   = R0:%0h R1:%0h R2:%0h R3:%0h R4:%0h R5:%0h R6:%0h R7:%0h",
+        $display("[REGS]    R0:%0h R1:%0h R2:%0h R3:%0h R4:%0h R5:%0h R6:%0h R7:%0h",
             uut.datapath.decode_stage.reg_file.regfile[0],
             uut.datapath.decode_stage.reg_file.regfile[1],
             uut.datapath.decode_stage.reg_file.regfile[2],
@@ -45,32 +78,21 @@ module top_tb;
             uut.datapath.decode_stage.reg_file.regfile[4],
             uut.datapath.decode_stage.reg_file.regfile[5],
             uut.datapath.decode_stage.reg_file.regfile[6],
-            uut.datapath.decode_stage.reg_file.regfile[7]
-        );
+            uut.datapath.decode_stage.reg_file.regfile[7]);
 
-        // ALU result and memory
-        $display("ALU Result = %0h", uut.datapath.execute_stage.alu_result);
-        $display("Mem[0] = %0h | Mem[1] = %0h | Mem[10] = %0h",
-            uut.datapath.mem_stage.data_mem.data_memory[0],
-            uut.datapath.mem_stage.data_mem.data_memory[1],
-            uut.datapath.mem_stage.data_mem.data_memory[10]
-        );
-
-        // Control signals latched in MEM pipeline register
-        $display("Control Signals => RegWrite_MEM=%b | MemRead_MEM=%b | MemWrite_MEM=%b | ResultSrc_MEM=%b | ALUSrc=%b | ImmSrc=%b",
+        // Control signals (example: MEM stage)
+        $display("[CTRL]    RegWrite_MEM=%b | MemRead_MEM=%b | MemWrite_MEM=%b | ResultSrc_MEM=%b | ALUSrc=%b | ImmSrc=%b",
             uut.RegWrite_MEM_reg,
             uut.MemRead_MEM_reg,
             uut.MemWrite_MEM_reg,
             uut.ResultSrc_MEM_reg,
             uut.ALUsrc_reg,
-            uut.ImmSrc_reg
-        );
+            uut.ImmSrc_reg);
 
         // Stall and halt
-        $display("STALL=%b | HALT=%b",
+        $display("[CTRL]    STALL=%b | HALT=%b",
             uut.datapath.stall,
-            uut.datapath.halt
-        );
+            uut.datapath.halt);
 
         $display("--------------------------------------------------");
 
