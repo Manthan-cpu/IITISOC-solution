@@ -11,8 +11,6 @@ module stage_WB (
     output wire [7:0]  write_data_WB,   
     output wire [2:0]  rd_final      
 );
-
-   
     writeback_stage wb_mux (
         .ResultSrc(ResultSrc_WB),
         .alu_result(alu_result_WB),
