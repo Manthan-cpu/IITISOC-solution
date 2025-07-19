@@ -81,14 +81,31 @@ module datapath_pipelined(
         .flush(flush_out)
     );
 
+    // Pipeline register for WB outputs to align register file write
+    reg RegWrite_RF;
+    reg [2:0] write_reg_RF;
+    reg [7:0] write_data_RF;
+
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            RegWrite_RF <= 0;
+            write_reg_RF <= 0;
+            write_data_RF <= 0;
+        end else begin
+            RegWrite_RF <= RegWrite_final;
+            write_reg_RF <= rd_final;
+            write_data_RF <= write_data_WB;
+        end
+    end
+
     decode decode_stage (
         .clk(clk),
         .reset(reset),
         .flush(flush_out),
         .instruction(instruction_IF),
-        .RegWrite(RegWrite_final),
-        .write_reg(rd_final),
-        .write_data(write_data_WB),
+        .RegWrite(RegWrite_RF),
+        .write_reg(write_reg_RF),
+        .write_data(write_data_RF),
         .ImmSrc(ImmSrc),
         .read_data1(read_data1_ID),
         .read_data2(read_data2_ID),

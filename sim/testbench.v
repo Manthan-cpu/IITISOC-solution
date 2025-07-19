@@ -38,13 +38,13 @@ module top_tb;
             uut.datapath.fetch_stage.instruction[15:12]);
 
         // DECODE STAGE
-        $display("[DECODE]  PC=%0h | Instr=%h | Opcode=%b | rs1=%0d | rs2=%0d | rd=%0d",
-            uut.datapath.decode_stage.PC_out, // If available
-            uut.datapath.decode_stage.instruction, // If available
-            uut.datapath.decode_stage.instruction[15:12], // If available
-            uut.datapath.decode_stage.rs1,
-            uut.datapath.decode_stage.rs2,
-            uut.datapath.decode_stage.rd);
+        // $display("[DECODE]  PC=%0h | Instr=%h | Opcode=%b | rs1=%0d | rs2=%0d | rd=%0d",
+        //     uut.datapath.decode_stage.PC_out, // If available
+        //     uut.datapath.decode_stage.instruction, // If available
+        //     uut.datapath.decode_stage.instruction[15:12], // If available
+        //     uut.datapath.decode_stage.rs1,
+        //     uut.datapath.decode_stage.rs2,
+        //     uut.datapath.decode_stage.rd);
         $display("          read_data1=%0d | read_data2=%0d | imm_out=%0d",
             uut.datapath.decode_stage.read_data1,
             uut.datapath.decode_stage.read_data2,
@@ -57,11 +57,10 @@ module top_tb;
             uut.datapath.execute_stage.branch_taken);
 
         // MEMORY STAGE
-        $display("[MEM]     Mem[0]=%0h | Mem[1]=%0h | Mem[10]=%0h | mem_data=%0h",
+        $display("[MEM]     Mem[0]=%0h | Mem[1]=%0h | Mem[10]=%0h",
             uut.datapath.mem_stage.data_mem.data_memory[0],
             uut.datapath.mem_stage.data_mem.data_memory[1],
-            uut.datapath.mem_stage.data_mem.data_memory[10],
-            uut.datapath.mem_stage.mem_data);
+            uut.datapath.mem_stage.data_mem.data_memory[10]);
 
         // WRITE-BACK STAGE
         $display("[WB]      write_data=%0h | RegWrite=%b | rd=%0d",
