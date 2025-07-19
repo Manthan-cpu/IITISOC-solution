@@ -8,10 +8,13 @@ module immediate_generator(
 
     always @(*) begin
         case (ImmSrc)
-            2'b00: imm_out = instruction[11:4]; // 8-bit immediate (LDI, JMP)
-            2'b01: imm_out = {{2{instruction[5]}}, instruction[5:0]}; // 6-bit signed (LOAD, STORE, BRANCH)
-            2'b10: imm_out = {5'b00000, instruction[5:3]}; // 3-bit(SHIFT)
-            2'b11: imm_out = {{3{instruction[4]}},instruction[4:0]};//5-bit(ADDI)
+            2'b00: case(instruction)
+                4'b1010: imm_out = instruction[8:1]; // JMP
+                4'b1101: imm_out = instruction[11:4]; //LDI
+                   endcase
+            2'b01: imm_out = {{2{instruction[5]}}, instruction[5:0]}; // LOAD, STORE, BEQ, BNE
+            2'b10: imm_out = {5'b00000, instruction[5:3]}; //SHIFT
+            2'b11: imm_out = {{3{instruction[1]}}, instruction[5:1]}; //ADDI
             default: imm_out = 8'b0;
         endcase
     end
