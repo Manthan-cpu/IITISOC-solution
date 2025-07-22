@@ -211,9 +211,9 @@ module datapath_pipelined(
         .alu_result_WB(alu_result_MEM),
         .mem_data_WB(mem_data_WB),
         .rd_WB(rd_WB),
-        .RegWrite_final(RegWrite_final),
-        .write_data_WB(write_data_WB),
-        .rd_final(rd_final)
+        .RegWrite_final(RegWrite_RF),
+        .write_data_WB(write_data_RF),
+        .rd_final(write_reg_RF)
     );
 
 endmodule
