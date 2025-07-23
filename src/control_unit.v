@@ -11,7 +11,8 @@ module control_unit(
     output reg [1:0] ImmSrc,
     output reg RegWrite,
     output reg Branch,
-    output reg Jump
+    output reg Jump,
+    output reg halt
     );
     
     always@(*) begin
@@ -54,8 +55,17 @@ end
                 ImmSrc = 2'b00; Jump = 1;
            end
            
-           4'b1110, 4'b1111: begin
+           4'b1110 : begin
            end
+           4'b1111: begin
+                halt = 1;
+           end
+            
+            default: begin
+                ResultSrc = 0; MemRead = 0; MemWrite = 0;
+                ALUSrc = 0; ImmSrc = 2'b11; RegWrite = 0;
+                Branch = 0; Jump = 0;
+            end
         
         endcase
     end  

@@ -9,7 +9,7 @@ module fetch789(
     input wire jump,
     input wire PC_sel,
     input wire predict_taken,
-
+    input wire halt,
     output reg [15:0] instruction,
     output reg [7:0] PC_out,
     output reg valid,
@@ -17,7 +17,7 @@ module fetch789(
 );
 
     reg [7:0] PC;
-    reg halt;
+   
     reg [15:0] instruction_memory [0:255];
 
     initial begin
@@ -30,7 +30,7 @@ module fetch789(
             PC_out <= 8'b0;
             instruction <= 16'b0;
             valid <= 1'b0;
-            halt <= 1'b0;
+        
             update <= 1'b0;
         end 
         
@@ -45,8 +45,8 @@ module fetch789(
 
 
 
-            if (instruction_memory[PC][15:12] == 4'b1111)
-                halt <= 1'b1;
+            // if (instruction_memory[PC][15:12] == 4'b1111)
+            //     halt <= 1'b1;
 
             if (jump) begin
                 PC <= instruction_memory[PC][11:4];
