@@ -8,7 +8,7 @@ module immediate_generator(
 
     always @(*) begin
         case (ImmSrc)
-            2'b00: case(instruction)
+            2'b00: case(instruction[15:12]);
                 4'b1010: imm_out = instruction[8:1]; // JMP
                 4'b1101: imm_out = instruction[11:4]; //LDI
                    endcase
