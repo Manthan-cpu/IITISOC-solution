@@ -14,7 +14,7 @@ module Execute(
     input  wire [1:0]        forwardB,
     input  wire signed [7:0] alu_result_mem,
     input  wire signed [7:0] write_data_wb,
-
+    input  wire              is_unsigned,
     output reg signed [7:0] alu_result,
     output reg              zero,
     output reg              branch_taken
@@ -51,7 +51,8 @@ module Execute(
         .dir(dir),
         .result(alu_out),
         .zero(alu_zero),
-        .branch_taken(alu_branch)
+        .branch_taken(alu_branch),
+        .is_unsigned(is_unsigned)
     );
 
     always @(posedge clk or posedge reset) begin

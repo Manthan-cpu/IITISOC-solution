@@ -17,6 +17,7 @@ module datapath_pipelined(
     input wire RegWrite_WB,
     input wire [3:0] opcode,
     input wire dir,
+    input wire is_unsigned,
 
     output wire [7:0] PC_out_IF,
     output wire [15:0] instruction_IF,
@@ -120,6 +121,7 @@ module datapath_pipelined(
     reg [2:0] rd_EX_reg;
     reg [3:0] opcode_EX;
     reg ALUsrc_EX, dir_EX;
+    reg is_unsigned_EX;
 
     always @(posedge clk or posedge reset) begin
         if (reset || flush_out) begin
@@ -132,6 +134,7 @@ module datapath_pipelined(
             opcode_EX <= 0;
             ALUsrc_EX <= 0;
             dir_EX <= 0;
+            is_unsigned_EX <= 0;
         end else if (!stall_internal) begin
             reg1_EX <= read_data1_ID;
             reg2_EX <= read_data2_ID;
@@ -142,6 +145,7 @@ module datapath_pipelined(
             opcode_EX <= opcode;
             ALUsrc_EX <= ALUsrc;
             dir_EX <= dir;
+            is_unsigned_EX <= is_unsigned;
         end
     end
 
@@ -161,6 +165,7 @@ module datapath_pipelined(
         .forwardB(forwardB),
         .alu_result_mem(alu_result_MEM),
         .write_data_wb(write_data_WB),
+        .is_unsigned(is_unsigned_EX),
         .alu_result(alu_result_EX),
         .zero(zero_EX),
         .branch_taken(branch_taken_EX)
@@ -206,6 +211,8 @@ module datapath_pipelined(
     );
 
     stage_WB writeback_stage (
+        .clk(clk),
+        .reset(reset),
         .RegWrite_WB(RegWrite_WB),
         .ResultSrc_WB(ResultSrc_WB),
         .alu_result_WB(alu_result_MEM),

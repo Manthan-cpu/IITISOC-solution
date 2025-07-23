@@ -16,6 +16,12 @@ module top_microprocessor(
     wire stall;
     wire halt;
     wire [15:0] instruction_IF;
+    wire is_unsigned;
+
+    wire halt_wire;
+    wire halt_reg, halt_MEM_reg, halt_WB_reg;
+
+    reg is_unsigned_reg, is_unsigned_MEM_reg, is_unsigned_WB_reg;
 
     reg ResultSrc_MEM_reg, RegWrite_MEM_reg, MemRead_MEM_reg, MemWrite_MEM_reg;
     reg ResultSrc_WB_reg, RegWrite_WB_reg;
@@ -36,7 +42,9 @@ module top_microprocessor(
         .ImmSrc(ImmSrc),
         .RegWrite(RegWrite),
         .Branch(Branch),
-        .Jump(Jump)
+        .Jump(Jump),
+        .halt(halt_wire),
+        .is_unsigned(is_unsigned)
     );
 
     always @(posedge clk or posedge reset) begin
@@ -52,6 +60,7 @@ module top_microprocessor(
             dir_reg           <= 0;
             opcode_reg        <= 0;
             branch_target_reg <= 0;
+            is_unsigned_reg   <= 0;
         end else if (!stall) begin
             ResultSrc_MEM_reg <= ResultSrc;
             MemRead_MEM_reg   <= MemRead;
@@ -64,6 +73,7 @@ module top_microprocessor(
             dir_reg           <= instruction_IF[2];
             opcode_reg        <= opcode_wire;
             branch_target_reg <= branch_target;
+            is_unsigned_reg   <= is_unsigned;
         end
     end
 
@@ -71,11 +81,19 @@ module top_microprocessor(
         if (reset) begin
             ResultSrc_WB_reg <= 0;
             RegWrite_WB_reg  <= 0;
+            is_unsigned_MEM_reg <= 0;
+            is_unsigned_WB_reg  <= 0;
         end else begin
             ResultSrc_WB_reg <= ResultSrc_MEM_reg;
             RegWrite_WB_reg  <= RegWrite_MEM_reg;
+            is_unsigned_MEM_reg <= is_unsigned_reg;
+            is_unsigned_WB_reg  <= is_unsigned_MEM_reg;
         end
     end
+
+    assign halt_reg = halt_wire;
+    assign halt_MEM_reg = halt_reg;
+    assign halt_WB_reg = halt_MEM_reg;
 
     assign opcode_wire = instruction_IF[15:12];
 
@@ -96,10 +114,11 @@ module top_microprocessor(
         .RegWrite_WB(RegWrite_WB_reg),
         .opcode(opcode_reg),
         .dir(dir_reg),
+        .is_unsigned(is_unsigned_WB_reg),
         .predict_taken(predict_taken),
         .flush_out(flush_out),
         .update(update),
-        .halt(halt),
+        .halt(halt_WB_reg),
         .instruction_IF(instruction_IF)
     );
 
