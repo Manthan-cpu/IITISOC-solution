@@ -222,3 +222,5 @@ module datapath_pipelined(
         .write_data_WB(write_data_WB),
         .rd_final(rd_final)
     );
+
+endmodule
