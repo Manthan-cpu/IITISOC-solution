@@ -37,7 +37,7 @@ module datapath_pipelined(
     wire [7:0] write_data_WB;
     wire RegWrite_final;
     wire ResultSrc_WB;
-    wire [1:0] forwardA, forwardB;
+    wire [1:0] forward_A, forward_B;
     wire valid_IF;
 
     wire stall_internal;
