@@ -21,7 +21,7 @@ module fetch789(
     reg [15:0] instruction_memory [0:255];
 
     initial begin
-        $readmemh("instruction.mem", instruction_memory);
+        $readmemb("instructions.mem", instruction_memory);
     end
 
     always @(posedge clk or posedge reset) begin
@@ -36,7 +36,7 @@ module fetch789(
         
         
         
-        else if (!stall && !halt) begin
+        else if (!stall ) begin
             instruction <= instruction_memory[PC];
             PC_out <= PC;
             valid <= ~flush;
