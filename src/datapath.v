@@ -161,8 +161,8 @@ module datapath_pipelined(
         .ALUsrc(ALUsrc_EX),
         .dir(dir_EX),
         .opcode(opcode_EX),
-        .forwardA(forwardA),
-        .forwardB(forwardB),
+        .forward_A(forward_A),
+        .forward_B(forward_B),
         .alu_result_mem(alu_result_MEM),
         .write_data_wb(write_data_WB),
         .is_unsigned(is_unsigned_EX),
@@ -179,8 +179,8 @@ module datapath_pipelined(
         .rs1(rs1_EX),
         .rs2(rs2_EX),
         .clk(clk),
-        .forward_A(forwardA),
-        .forward_B(forwardB)
+        .forward_A(forward_A),
+        .forward_B(forward_B)
     );
 
     reg [2:0] rd_MEM_reg;
@@ -222,5 +222,3 @@ module datapath_pipelined(
         .write_data_WB(write_data_WB),
         .rd_final(rd_final)
     );
-
-endmodule
