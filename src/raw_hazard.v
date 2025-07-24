@@ -16,17 +16,17 @@ module data_memory_hazard(
 
     always @(posedge clk) begin
         
-        if (EX_MEM_regwrite && (EX_MEM_rd != 0) && (EX_MEM_rd == rs1))
+        if (EX_MEM_regwrite && (EX_MEM_rd != 3'b000) && (EX_MEM_rd == rs1))
             forward_A = 2'b10;
-        else if (MEM_WB_regwrite && (MEM_WB_rd != 0) && (MEM_WB_rd == rs1))
+        else if (MEM_WB_regwrite && (MEM_WB_rd != 3'b000) && (MEM_WB_rd == rs1))
             forward_A = 2'b01;
         else
             forward_A = 2'b00;
 
        
-        if (EX_MEM_regwrite && (EX_MEM_rd != 0) && (EX_MEM_rd == rs2))
+        if (EX_MEM_regwrite && (EX_MEM_rd != 3'b000) && (EX_MEM_rd == rs2))
             forward_B = 2'b10;
-        else if (MEM_WB_regwrite && (MEM_WB_rd != 0) && (MEM_WB_rd == rs2))
+        else if (MEM_WB_regwrite && (MEM_WB_rd != 3'b000) && (MEM_WB_rd == rs2))
             forward_B = 2'b01;
         else
             forward_B = 2'b00;
