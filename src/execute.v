@@ -10,8 +10,8 @@ module Execute(
     input  wire              ALUsrc,
     input  wire              dir,
     input  wire [3:0]        opcode,
-    input  wire [1:0]        forwardA,
-    input  wire [1:0]        forwardB,
+    input  wire [1:0]        forward_A,
+    input  wire [1:0]        forward_B,
     input  wire signed [7:0] alu_result_mem,
     input  wire signed [7:0] write_data_wb,
     input  wire              is_unsigned,
@@ -27,13 +27,13 @@ module Execute(
     wire alu_branch;
 
     always @(*) begin
-        case (forwardA)
+        case (forward_A)
             2'b01: operand1 = write_data_wb;
             2'b10: operand1 = alu_result_mem;
             default: operand1 = reg1;
         endcase
 
-        case (forwardB)
+        case (forward_B)
             2'b01: intermediate = write_data_wb;
             2'b10: intermediate = alu_result_mem;
             default: intermediate = reg2;
