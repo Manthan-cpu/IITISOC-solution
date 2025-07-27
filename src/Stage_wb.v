@@ -7,7 +7,7 @@ module stage_WB (
     input  wire        ResultSrc_WB,    
     input  wire [7:0]  alu_result_WB,   
     input  wire [7:0]  mem_data_WB,     
-    input  wire [2:0]  rd_WB,           
+    input  wire [2:0]  rd_WB,          
 
     output reg         RegWrite_final,  
     output reg  [7:0]  write_data_WB,   
