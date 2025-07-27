@@ -77,12 +77,11 @@ module decode(
             rs2 <= rs2_w;
             rd  <= rd_w;
             read_data1 <= rf_read_data1;
-            read_data2 <= rf_read_data2;
+           read_data2 <= rf_read_data2;
             imm_out <= imm_gen_out;
         end
     end
-
-
+  
     register_file reg_file(
         .clk(clk),
         .reset(reset),
