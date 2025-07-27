@@ -33,7 +33,7 @@ module datapath_pipelined(
     wire signed [7:0] alu_result_EX;
     wire zero_EX, branch_taken_EX;
     wire signed [7:0] mem_data_WB, alu_result_MEM;
-    wire [2:0] rd_EX, rd_MEM, rd_WB, rd_final;
+    wire [2:0] rd_EX, rd_MEM, rd_WB,rd_WB_d, rd_final;
     wire [7:0] write_data_WB;
     wire RegWrite_final;
     wire ResultSrc_WB;
@@ -83,30 +83,30 @@ module datapath_pipelined(
     );
 
     // Pipeline register for WB outputs to align register file write
-    reg RegWrite_RF;
-    reg [2:0] write_reg_RF;
-    reg [7:0] write_data_RF;
+//    reg RegWrite_RF;
+//    reg [2:0] write_reg_RF;
+////    reg [7:0] write_data_RF;
 
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            RegWrite_RF <= 0;
-            write_reg_RF <= 0;
-            write_data_RF <= 0;
-        end else begin
-            RegWrite_RF <= RegWrite_final;
-            write_reg_RF <= rd_final;
-            write_data_RF <= write_data_WB;
-        end
-    end
+//    always @(posedge clk or posedge reset) begin
+//        if (reset) begin
+//            RegWrite_RF <= 0;
+////            write_reg_RF <= 0;
+////            write_data_RF <= 0;
+//        end else begin
+//            RegWrite_RF <= RegWrite_final;
+////            write_reg_RF <= rd_final;
+////            write_data_RF <= write_data_WB;
+//        end
+//    end
 
     decode decode_stage (
         .clk(clk),
         .reset(reset),
         .flush(flush_out),
         .instruction(instruction_IF),
-        .RegWrite(RegWrite_RF),
-        .write_reg(write_reg_RF),
-        .write_data(write_data_RF),
+        .RegWrite(RegWrite_final),
+        .write_reg(rd_final),
+        .write_data(write_data_WB),
         .ImmSrc(ImmSrc),
         .read_data1(read_data1_ID),
         .read_data2(read_data2_ID),
@@ -125,8 +125,8 @@ module datapath_pipelined(
 
     always @(posedge clk or posedge reset) begin
         if (reset || flush_out) begin
-            reg1_EX <= 0;
-            reg2_EX <= 0;
+//            reg1_EX <= 0;
+//            reg2_EX <= 0;
             imm_EX <= 0;
             rs1_EX <= 0;
             rs2_EX <= 0;
@@ -136,8 +136,8 @@ module datapath_pipelined(
             dir_EX <= 0;
             is_unsigned_EX <= 0;
         end else if (!stall_internal) begin
-            reg1_EX <= read_data1_ID;
-            reg2_EX <= read_data2_ID;
+//            reg1_EX <= read_data1_ID;
+//            reg2_EX <= read_data2_ID;
             imm_EX <= imm_out_ID;
             rs1_EX <= rs1_ID;
             rs2_EX <= rs2_ID;
@@ -155,8 +155,8 @@ module datapath_pipelined(
         .clk(clk),
         .reset(reset),
         .flush(flush_out),
-        .reg1(reg1_EX),
-        .reg2(reg2_EX),
+        .reg1(read_data1_ID),
+        .reg2(read_data2_ID),
         .immediate(imm_EX),
         .ALUsrc(ALUsrc_EX),
         .dir(dir_EX),
@@ -175,7 +175,7 @@ module datapath_pipelined(
         .EX_MEM_regwrite(RegWrite_MEM),
         .EX_MEM_rd(rd_MEM),
         .MEM_WB_regwrite(RegWrite_WB),
-        .MEM_WB_rd(rd_WB),
+        .MEM_WB_rd(rd_WB_d),
         .rs1(rs1_EX),
         .rs2(rs2_EX),
         .clk(clk),
@@ -207,7 +207,8 @@ module datapath_pipelined(
         .alu_result_out(alu_result_MEM),
         .ResultSrc_WB(ResultSrc_WB),
         .RegWrite_WB(RegWrite_WB),
-        .rd_WB(rd_WB)
+        .rd_WB(rd_WB),
+        .rd_WB_d(rd_WB_d)
     );
 
     stage_WB writeback_stage (
