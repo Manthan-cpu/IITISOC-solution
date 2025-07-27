@@ -38,9 +38,9 @@ module Execute(
             2'b10: intermediate = alu_result_mem;
             default: intermediate = reg2;
         endcase
-    end
+    
 
-    always @(*) begin
+  
         operand2 = (ALUsrc) ? immediate : intermediate;
     end
 
@@ -55,23 +55,24 @@ module Execute(
         .is_unsigned(is_unsigned)
     );
 
-    always @(posedge clk or posedge reset) begin
+    always @(*) begin
         if (reset ) begin
-            alu_result   <= 8'd0;
-            zero         <= 1'b0;
-            branch_taken <= 1'b0;
+            alu_result   = 8'd0;
+            zero         = 1'b0;
+            branch_taken = 1'b0;
         end 
         else if(flush)begin
-            alu_result   <= 8'd0;
-            zero         <= 1'b0;
-            branch_taken <= alu_branch;
+            alu_result   = 8'd0;
+            zero         = 1'b0;
+            branch_taken = alu_branch;
         end
         else begin
-            alu_result   <= alu_out;
-            zero         <= alu_zero;
-            branch_taken <= alu_branch;
+            alu_result   = alu_out;
+            zero         = alu_zero;
+            branch_taken = alu_branch;
         end
     end
 
 endmodule
+
 
