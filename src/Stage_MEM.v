@@ -14,7 +14,8 @@ module stage_MEM (
     output reg [7:0]   alu_result_out,
     output reg         ResultSrc_WB,
     output reg         RegWrite_WB,
-    output reg [2:0]   rd_WB
+    output wire [2:0]   rd_WB,
+    output reg [2:0] rd_WB_d
 );
 
    
@@ -31,20 +32,20 @@ module stage_MEM (
         .read_data(mem_read_data)
     );
 
-
+assign  rd_WB = rd_MEM;
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             mem_data_out   <= 8'b0;
             alu_result_out <= 8'b0;
             ResultSrc_WB   <= 1'b0;
             RegWrite_WB    <= 1'b0;
-            rd_WB          <= 3'b000;
+            rd_WB_d         <= 3'b000;
         end else begin
             mem_data_out   <= mem_read_data;
             alu_result_out <= alu_result_MEM;
             ResultSrc_WB   <= ResultSrc_MEM;
             RegWrite_WB    <= RegWrite_MEM;
-            rd_WB          <= rd_MEM;
+            rd_WB_d        <= rd_MEM;
         end
     end
 
