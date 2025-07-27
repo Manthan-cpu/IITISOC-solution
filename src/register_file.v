@@ -11,19 +11,29 @@ module register_file(
     output wire signed [7:0] read_data1,
     output wire signed [7:0] read_data2
     );
-    
+   reg [2:0] read_reg1_d;
+   reg [2:0] read_reg2_d;
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            read_reg1_d<=0;
+            read_reg2_d<=0;
+        end else begin
+            read_reg1_d<=read_reg1;
+           read_reg2_d<=read_reg2;
+        end
+        end
     reg [7:0] regfile [7:0];
-    assign read_data1 = regfile[read_reg1];
-    assign read_data2 = regfile[read_reg2];
+    assign read_data2 = regfile[read_reg2_d];
+    assign read_data1 = regfile[read_reg1_d];
     integer i;
     
-    always@(posedge clk or posedge reset) begin
+    always@(*) begin
         if (reset) begin
             for (i=0; i<8; i = i+1)
-                regfile[i] <= 8'b0;
+                regfile[i] = 8'b0;
         end
         else if (RegWrite) begin
-            regfile[write_reg] <= write_data;
+            regfile[write_reg] = write_data;
         end
     end        
 endmodule
