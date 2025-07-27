@@ -46,30 +46,30 @@ module top_tb;
         //     uut.datapath.decode_stage.rs2,
         //     uut.datapath.decode_stage.rd);
         $display("          read_data1=%0d | read_data2=%0d | imm_out=%0d",
-            uut.datapath.decode_stage.read_data1,
-            uut.datapath.decode_stage.read_data2,
+            uut.datapath.decode_stage.rf_read_data1,
+            uut.datapath.decode_stage.rf_read_data2,
             uut.datapath.decode_stage.imm_out);
 
         // EXECUTE STAGE
-        $display("[EXECUTE] ALU Result=%0h | Zero=%b | branch_taken=%b",
+        $display("[EXECUTE] ALU Result=%0d | Zero=%b | branch_taken=%b",
             uut.datapath.execute_stage.alu_result,
             uut.datapath.execute_stage.zero,
             uut.datapath.execute_stage.branch_taken);
 
         // MEMORY STAGE
-        $display("[MEM]     Mem[0]=%0h | Mem[1]=%0h | Mem[10]=%0h",
+        $display("[MEM]     Mem[0]=%0d | Mem[1]=%0d | Mem[10]=%0d",
             uut.datapath.mem_stage.data_mem.data_memory[0],
             uut.datapath.mem_stage.data_mem.data_memory[1],
             uut.datapath.mem_stage.data_mem.data_memory[10]);
 
         // WRITE-BACK STAGE
-        $display("[WB]      write_data=%0h | RegWrite=%b | rd=%0d",
+        $display("[WB]      write_data=%0d | RegWrite=%b | rd=%0d",
             uut.datapath.writeback_stage.write_data_WB,
             uut.datapath.writeback_stage.RegWrite_final,
             uut.datapath.writeback_stage.rd_final);
 
         // Register file contents
-        $display("[REGS]    R0:%0h R1:%0h R2:%0h R3:%0h R4:%0h R5:%0h R6:%0h R7:%0h",
+        $display("[REGS]    R0:%0d R1:%0d R2:%0d R3:%0d R4:%0d R5:%0d R6:%0d R7:%0d",
             uut.datapath.decode_stage.reg_file.regfile[0],
             uut.datapath.decode_stage.reg_file.regfile[1],
             uut.datapath.decode_stage.reg_file.regfile[2],
@@ -102,3 +102,6 @@ module top_tb;
     end
 
 endmodule
+
+
+
