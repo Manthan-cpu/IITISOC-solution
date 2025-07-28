@@ -202,7 +202,7 @@ module datapath_pipelined(
         .RegWrite_MEM(RegWrite_MEM),
         .rd_MEM(rd_MEM),
         .alu_result_MEM(alu_result_EX),
-        .write_data_MEM(reg2_EX),
+        .write_data_MEM(read_data2_ID),
         .mem_data_out(mem_data_WB),
         .alu_result_out(alu_result_MEM),
         .ResultSrc_WB(ResultSrc_WB),
