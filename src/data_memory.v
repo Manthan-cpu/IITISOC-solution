@@ -10,8 +10,22 @@ module memory_stage (
     output reg [7:0]  read_data             
 );
     reg [7:0] data_memory [0:255];
+    reg  MemWrite_d;
+    reg  MemWrite_dd;
     integer i;
 
+ always @(posedge clk or posedge reset) begin
+       if(reset)
+       begin
+         MemWrite_d <= MemWrite;
+        MemWrite_dd <= MemWrite_d;
+        end
+        else
+        begin
+       MemWrite_d <= MemWrite;
+        MemWrite_dd <= MemWrite_d;
+       end
+    end
     // Initialize memory
     initial begin
         for (i = 0; i < 256; i = i + 1)
@@ -19,7 +33,7 @@ module memory_stage (
     end
 
     always @(posedge clk) begin
-        if (MemWrite)
+        if (MemWrite_d)
             data_memory[alu_result] <= write_data;
     end
 
@@ -32,4 +46,3 @@ module memory_stage (
     end
 
 endmodule
-
