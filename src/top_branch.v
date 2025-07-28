@@ -53,7 +53,7 @@ module top_microprocessor(
             MemRead_MEM_reg   <= 0;
             MemWrite_MEM_reg  <= 0;
             RegWrite_MEM_reg  <= 0;
-            ImmSrc_reg        <= 0;
+//            ImmSrc_reg        <= 0;
             ALUsrc_reg        <= 0;
             Branch_reg        <= 0;
             Jump_reg          <= 0;
@@ -66,7 +66,7 @@ module top_microprocessor(
             MemRead_MEM_reg   <= MemRead;
             MemWrite_MEM_reg  <= MemWrite;
             RegWrite_MEM_reg  <= RegWrite;
-            ImmSrc_reg        <= ImmSrc;
+//            ImmSrc_reg        <= ImmSrc;
             ALUsrc_reg        <= ALUsrc;
             Branch_reg        <= Branch;
             Jump_reg          <= Jump;
@@ -105,7 +105,7 @@ module top_microprocessor(
         .jump(Jump_reg),
         .PC_sel(Branch_reg),
         .branch_target(branch_target_reg),
-        .ImmSrc(ImmSrc_reg),
+        .ImmSrc(ImmSrc),
         .ALUsrc(ALUsrc_reg),
         .MemRead_MEM(MemRead_MEM_reg),
         .MemWrite_MEM(MemWrite_MEM_reg),
@@ -123,4 +123,3 @@ module top_microprocessor(
     );
 
 endmodule
-
