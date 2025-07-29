@@ -1,3 +1,4 @@
+
 `timescale 1ns / 1ps
 
 module fetch789(
@@ -8,7 +9,6 @@ module fetch789(
     input wire [7:0] branch_target,
     input wire jump,
     input wire PC_sel,
-    input wire predict_taken,
     input wire halt,
     output reg [15:0] instruction,
     output reg [7:0] PC_out,
@@ -21,7 +21,7 @@ module fetch789(
     reg [15:0] instruction_memory [0:255];
 
     initial begin
-        $readmemb("instructions.mem", instruction_memory);
+        $readmemb("C:/Users/Aryan jain/programs/8-bit-pipelined-microprocessor/8-bit-pipelined-microprocessor.srcs/sim_1/new/instruction.mem", instruction_memory);
     end
 
     always @(posedge clk or posedge reset) begin
@@ -35,32 +35,29 @@ module fetch789(
         end 
         
         
-        
+       
         else if (!stall ) begin
             instruction <= instruction_memory[PC];
             PC_out <= PC;
             valid <= ~flush;
             update <= 0;
 
-
-
-
             // if (instruction_memory[PC][15:12] == 4'b1111)
             //     halt <= 1'b1;
 
-            if (jump) begin
-                PC <= instruction_memory[PC][11:4];
-            end
-            else if (PC_sel) begin
+//            if (jump) begin
+//                PC <= instruction_memory[PC][11:4];
+//            end
+            if (PC_sel) begin
                 PC <= branch_target;
                 update <= 1;
             end
             else if (flush) begin
                 PC <= branch_target;
             end
-            else if (predict_taken) begin
-                PC <= branch_target;
-            end
+//            else if (predict_taken) begin
+//                PC <= branch_target;
+//            end
             else begin
                 PC <= PC + 1;
             end
@@ -74,4 +71,3 @@ module fetch789(
     
 
 endmodule
-
