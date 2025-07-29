@@ -1,0 +1,8 @@
+LDI R1, 5
+LDI R2, 10
+ADD R1, R2, R3, S
+SUB R1, R2, R4, S
+BNE R1, R2, L0
+NOP
+HLT
+
