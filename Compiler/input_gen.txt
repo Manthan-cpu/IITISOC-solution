@@ -1,0 +1,8 @@
+int a = 5;
+int b = 10;
+int c = a + b;
+int d = a - b;
+if (a == b) d = 1;
+mem[c + 5] = d;
+nop;
+hlt;
