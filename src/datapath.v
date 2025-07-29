@@ -1,10 +1,10 @@
+
 `timescale 1ns / 1ps
 
 module datapath_pipelined(
     input wire clk,
     input wire reset,
     output wire stall,
-    input wire flush,
     input wire jump,
     input wire PC_sel,
     input wire [7:0] branch_target,
@@ -18,10 +18,9 @@ module datapath_pipelined(
     input wire [3:0] opcode,
     input wire dir,
     input wire is_unsigned,
-
+    input wire Branch,
     output wire [7:0] PC_out_IF,
     output wire [15:0] instruction_IF,
-    output wire predict_taken,
     output wire flush_out,
     output wire update,
     output wire halt       
@@ -39,7 +38,7 @@ module datapath_pipelined(
     wire ResultSrc_WB;
     wire [1:0] forward_A, forward_B;
     wire valid_IF;
-
+    wire flush;
     wire stall_internal;
     wire halt_fetch;
 
@@ -59,10 +58,9 @@ module datapath_pipelined(
         .reset(reset),
         .flush(flush),
         .stall(stall_internal),
-        .branch_target(branch_target),
+        .branch_target(imm_out_ID),
         .jump(jump),
         .PC_sel(PC_sel),
-        .predict_taken(predict_taken),
         .instruction(instruction_IF),
         .PC_out(PC_out_IF),
         .valid(valid_IF),
@@ -71,17 +69,15 @@ module datapath_pipelined(
     );
 
     control_hazard control_hazard_unit (
-        .branch_target(branch_target),
+        .Branch(Branch),
         .clk(clk),
         .reset(reset),
-        .instruction_memory(instruction_IF),
-        .update(update),
-        .actual_taken(branch_taken_EX),
-        .PC_out(PC_out_IF),
-        .predict_taken(predict_taken),
-        .flush(flush_out)
+        .Jump(jump),
+        .branch_taken(branch_taken),
+        .flush(flush)
     );
-
+    
+    assign flush_out = flush;
     // Pipeline register for WB outputs to align register file write
 //    reg RegWrite_RF;
 //    reg [2:0] write_reg_RF;
@@ -102,7 +98,7 @@ module datapath_pipelined(
     decode decode_stage (
         .clk(clk),
         .reset(reset),
-        .flush(flush_out),
+        .flush(flush),
         .instruction(instruction_IF),
         .RegWrite(RegWrite_final),
         .write_reg(rd_final),
@@ -124,7 +120,7 @@ module datapath_pipelined(
     reg is_unsigned_EX;
 
     always @(posedge clk or posedge reset) begin
-        if (reset || flush_out) begin
+        if (reset || flush) begin
 //            reg1_EX <= 0;
 //            reg2_EX <= 0;
             imm_EX <= 0;
@@ -154,7 +150,7 @@ module datapath_pipelined(
     Execute execute_stage (
         .clk(clk),
         .reset(reset),
-        .flush(flush_out),
+        .flush(flush),
         .reg1(read_data1_ID),
         .reg2(read_data2_ID),
         .immediate(imm_EX),
@@ -171,6 +167,8 @@ module datapath_pipelined(
         .branch_taken(branch_taken_EX)
     );
 
+    
+    
     data_memory_hazard forward_unit (
         .EX_MEM_regwrite(RegWrite_MEM),
         .EX_MEM_rd(rd_MEM),
