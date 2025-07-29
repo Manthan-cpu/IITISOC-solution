@@ -21,7 +21,7 @@ module fetch789(
     reg [15:0] instruction_memory [0:255];
 
     initial begin
-        $readmemb("C:/Users/Aryan jain/programs/8-bit-pipelined-microprocessor/8-bit-pipelined-microprocessor.srcs/sim_1/new/instruction.mem", instruction_memory);
+        $readmemb("instruction.mem", instruction_memory);
     end
 
     always @(posedge clk or posedge reset) begin
