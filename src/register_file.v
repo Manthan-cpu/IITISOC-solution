@@ -1,3 +1,4 @@
+
 `timescale 1ns/1ps
 
 module register_file(
@@ -13,13 +14,16 @@ module register_file(
     );
    reg [2:0] read_reg1_d;
    reg [2:0] read_reg2_d;
+   reg RegWrite_d;
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            read_reg1_d<=0;
-            read_reg2_d<=0;
+            read_reg1_d <=0;
+            read_reg2_d <=0;
+            RegWrite_d <=0;
         end else begin
-            read_reg1_d<=read_reg1;
-           read_reg2_d<=read_reg2;
+            read_reg1_d <= read_reg1;
+           read_reg2_d <= read_reg2;
+           RegWrite_d <= RegWrite;
         end
         end
     reg [7:0] regfile [7:0];
@@ -32,7 +36,7 @@ module register_file(
             for (i=0; i<8; i = i+1)
                 regfile[i] = 8'b0;
         end
-        else if (RegWrite) begin
+        else if (RegWrite_d) begin
             regfile[write_reg] = write_data;
         end
     end        
