@@ -101,4 +101,3 @@ module decode(
     );
 
 endmodule
-
