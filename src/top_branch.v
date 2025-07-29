@@ -5,14 +5,14 @@ module top_microprocessor(
     input wire reset
 );
 
-    wire flush_out, jump, PC_sel, ALUsrc;
+    wire flush_out, PC_sel, ALUsrc;
     wire MemRead, MemWrite, RegWrite, ResultSrc, Branch, Jump;
     wire RegWrite_WB;
     wire [7:0] branch_target;
     wire [1:0] ImmSrc;
     wire [3:0] opcode_wire;
     wire dir;
-    wire predict_taken, update;
+    wire update;
     wire stall;
     wire halt;
     wire [15:0] instruction_IF;
@@ -90,6 +90,7 @@ module top_microprocessor(
             is_unsigned_WB_reg  <= is_unsigned_MEM_reg;
         end
     end
+ 
 
     assign halt_reg = halt_wire;
     assign halt_MEM_reg = halt_reg;
@@ -101,9 +102,9 @@ module top_microprocessor(
         .clk(clk),
         .reset(reset),
         .stall(stall),
-        .flush(flush_out),
         .jump(Jump_reg),
         .PC_sel(Branch_reg),
+        .Branch(Branch_reg),
         .branch_target(branch_target_reg),
         .ImmSrc(ImmSrc),
         .ALUsrc(ALUsrc_reg),
@@ -115,7 +116,6 @@ module top_microprocessor(
         .opcode(opcode_reg),
         .dir(dir_reg),
         .is_unsigned(is_unsigned_WB_reg),
-        .predict_taken(predict_taken),
         .flush_out(flush_out),
         .update(update),
         .halt(halt_WB_reg),
