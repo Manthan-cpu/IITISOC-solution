@@ -1,7 +1,6 @@
-
 `timescale 1ns / 1ps
 
-module stage_WB (
+module stage_WB(
     input  wire        clk,
     input  wire        reset,
     input  wire        RegWrite_WB,     
@@ -20,7 +19,9 @@ module stage_WB (
         .ResultSrc(ResultSrc_WB),
         .alu_result(alu_result_WB),
         .mem_data(mem_data_WB),
-        .writeback_data(wb_data_mux)
+        .writeback_data(wb_data_mux),
+        .clk(clk),
+        .reset(reset)
     );
     always @(posedge clk or posedge reset) begin
         if (reset) begin
