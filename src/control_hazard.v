@@ -8,10 +8,10 @@ module control_hazard(
     input wire branch_taken,
     output reg flush
 );
-
+ 
 always@(*) begin 
-        flush = 1'b0;
-    if ((Branch && branch_taken) || Jump) begin
+        
+    if (( branch_taken) || Jump) begin
         flush = 1'b1;
         end
     else begin
