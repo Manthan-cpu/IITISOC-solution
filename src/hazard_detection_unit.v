@@ -1,4 +1,3 @@
-
 `timescale 1ns / 1ps
 
 module hazard_detection_unit(
@@ -6,7 +5,8 @@ module hazard_detection_unit(
     input wire [2:0] rd_EX,             
     input wire MemRead_EX,              
     output wire stall                   
-);
-assign stall =0;
- //   assign stall = (MemRead_EX && ((rd_EX == rs1_ID) || (rd_EX == rs2_ID))) ? 1'b1 : 1'b0;
+    );
+    
+    assign stall = 0;
+
 endmodule
