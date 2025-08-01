@@ -1,4 +1,3 @@
-
 `timescale 1ns / 1ps
 
 module datapath_pipelined(
@@ -41,11 +40,15 @@ module datapath_pipelined(
     wire flush;
     wire stall_internal;
     wire halt_fetch;
+    wire [7:0]mem_read_ex ;
+    wire [1:0]forward_AL ;
+    wire [1:0]forward_BL;
+    wire Regwrite_WB;
 
     assign stall = stall_internal;
     assign halt = halt_fetch;
 
-    hazard_detection_unit hazard_unit (
+    hazard_detection_unit hazard_detection_unit(
         .rs1_ID(rs1_ID),
         .rs2_ID(rs2_ID),
         .rd_EX(rd_EX),
@@ -53,7 +56,7 @@ module datapath_pipelined(
         .stall(stall_internal)
     );
 
-    fetch789 fetch_stage (
+    fetch789 fetch_stage(
         .clk(clk),
         .reset(reset),
         .flush(flush),
@@ -68,7 +71,7 @@ module datapath_pipelined(
         .halt(halt_fetch)     
     );
 
-    control_hazard control_hazard_unit (
+    control_hazard control_hazard_unit(
         .Branch(Branch),
         .clk(clk),
         .reset(reset),
@@ -78,24 +81,8 @@ module datapath_pipelined(
     );
     
     assign flush_out = flush;
-    // Pipeline register for WB outputs to align register file write
-//    reg RegWrite_RF;
-//    reg [2:0] write_reg_RF;
-////    reg [7:0] write_data_RF;
 
-//    always @(posedge clk or posedge reset) begin
-//        if (reset) begin
-//            RegWrite_RF <= 0;
-////            write_reg_RF <= 0;
-////            write_data_RF <= 0;
-//        end else begin
-//            RegWrite_RF <= RegWrite_final;
-////            write_reg_RF <= rd_final;
-////            write_data_RF <= write_data_WB;
-//        end
-//    end
-
-    decode decode_stage (
+    decode decode_stage(
         .clk(clk),
         .reset(reset),
         .flush(flush),
@@ -121,8 +108,6 @@ module datapath_pipelined(
 
     always @(posedge clk or posedge reset) begin
         if (reset || flush) begin
-//            reg1_EX <= 0;
-//            reg2_EX <= 0;
             imm_EX <= 0;
             rs1_EX <= 0;
             rs2_EX <= 0;
@@ -131,9 +116,9 @@ module datapath_pipelined(
             ALUsrc_EX <= 0;
             dir_EX <= 0;
             is_unsigned_EX <= 0;
-        end else if (!stall_internal) begin
-//            reg1_EX <= read_data1_ID;
-//            reg2_EX <= read_data2_ID;
+        end
+        
+        else if (!stall_internal) begin
             imm_EX <= imm_out_ID;
             rs1_EX <= rs1_ID;
             rs2_EX <= rs2_ID;
@@ -147,7 +132,7 @@ module datapath_pipelined(
 
     assign rd_EX = rd_EX_reg;
 
-    Execute execute_stage (
+    Execute execute_stage(
         .clk(clk),
         .reset(reset),
         .flush(flush),
@@ -164,12 +149,15 @@ module datapath_pipelined(
         .is_unsigned(is_unsigned_EX),
         .alu_result(alu_result_EX),
         .zero(zero_EX),
-        .branch_taken(branch_taken_EX)
+        .branch_taken(branch_taken),
+        .mem_read_ex (mem_read_ex),
+        .forward_AL(forward_AL),
+        .forward_BL(forward_BL),
+        .ResultSrc_MEM(ResultSrc_MEM) 
     );
 
-    
-    
-    data_memory_hazard forward_unit (
+     
+    data_memory_hazard forward_unit(
         .EX_MEM_regwrite(RegWrite_MEM),
         .EX_MEM_rd(rd_MEM),
         .MEM_WB_regwrite(RegWrite_WB),
@@ -178,10 +166,15 @@ module datapath_pipelined(
         .rs2(rs2_EX),
         .clk(clk),
         .forward_A(forward_A),
-        .forward_B(forward_B)
+        .forward_B(forward_B),
+        .forward_AL(forward_AL),
+        .forward_BL(forward_BL),
+        .ResultSrc_MEM(ResultSrc_MEM)
     );
 
+
     reg [2:0] rd_MEM_reg;
+    
     always @(posedge clk or posedge reset) begin
         if (reset)
             rd_MEM_reg <= 0;
@@ -191,7 +184,7 @@ module datapath_pipelined(
 
     assign rd_MEM = rd_MEM_reg;
 
-    stage_MEM mem_stage (
+    stage_MEM mem_stage(
         .clk(clk),
         .reset(reset),
         .MemRead_MEM(MemRead_MEM),
@@ -204,15 +197,18 @@ module datapath_pipelined(
         .mem_data_out(mem_data_WB),
         .alu_result_out(alu_result_MEM),
         .ResultSrc_WB(ResultSrc_WB),
-        .RegWrite_WB(RegWrite_WB),
+        .Regwrite_WB(Regwrite_WB),
         .rd_WB(rd_WB),
-        .rd_WB_d(rd_WB_d)
+        .rd_WB_d(rd_WB_d),
+        .forward_B(forward_B),
+       .mem_read_ex(mem_read_ex)
     );
 
-    stage_WB writeback_stage (
+
+    stage_WB writeback_stage(
         .clk(clk),
         .reset(reset),
-        .RegWrite_WB(RegWrite_WB),
+        .RegWrite_WB(Regwrite_WB),
         .ResultSrc_WB(ResultSrc_WB),
         .alu_result_WB(alu_result_MEM),
         .mem_data_WB(mem_data_WB),
