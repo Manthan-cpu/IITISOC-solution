@@ -47,7 +47,10 @@ module testbench;
             uut.datapath.execute_stage.branch_taken);
 
  
-        $display("[MEM]     Mem[100]=%0d | Mem[104]=%0d | Mem[108]=%0d",
+        $display("[MEM]     Mem[0]=%0d | Mem[1]=%0d | Mem[2]=%0d | Mem[100]=%0d | Mem[104]=%0d | Mem[108]=%0d",
+            uut.datapath.mem_stage.data_mem.data_memory[0],
+            uut.datapath.mem_stage.data_mem.data_memory[1],
+            uut.datapath.mem_stage.data_mem.data_memory[2],
             uut.datapath.mem_stage.data_mem.data_memory[100],
             uut.datapath.mem_stage.data_mem.data_memory[104],
             uut.datapath.mem_stage.data_mem.data_memory[108]);
