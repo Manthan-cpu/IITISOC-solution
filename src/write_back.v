@@ -10,7 +10,7 @@ module writeback_stage(
     input wire reset
 );
 reg ResultSrc_d ;
-always@(posedge clk) begin
+always@(posedge clk or posedge reset) begin
 ResultSrc_d <= ResultSrc ;
 end
 
