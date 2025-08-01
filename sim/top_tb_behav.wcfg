@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="top_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="top_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="246.001 ns"></ZoomEndTime>
+      <Cursor1Time time="341.030 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="231"></NameColumnWidth>
+      <ValueColumnWidth column_width="75"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="28" />
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/reset" type="logic">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/fetch_stage/PC_out" type="array">
+      <obj_property name="ElementShortName">PC_out[7:0]</obj_property>
+      <obj_property name="ObjectShortName">PC_out[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/instruction" type="array">
+      <obj_property name="ElementShortName">instruction[15:0]</obj_property>
+      <obj_property name="ObjectShortName">instruction[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/fetch_stage/flush" type="logic">
+      <obj_property name="ElementShortName">flush</obj_property>
+      <obj_property name="ObjectShortName">flush</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/fetch_stage/stall" type="logic">
+      <obj_property name="ElementShortName">stall</obj_property>
+      <obj_property name="ObjectShortName">stall</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/fetch_stage/jump" type="logic">
+      <obj_property name="ElementShortName">jump</obj_property>
+      <obj_property name="ObjectShortName">jump</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/control_hazard_unit/branch_taken" type="logic">
+      <obj_property name="ElementShortName">branch_taken</obj_property>
+      <obj_property name="ObjectShortName">branch_taken</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/opcode" type="array">
+      <obj_property name="ElementShortName">opcode[3:0]</obj_property>
+      <obj_property name="ObjectShortName">opcode[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/rs1" type="array">
+      <obj_property name="ElementShortName">rs1[2:0]</obj_property>
+      <obj_property name="ObjectShortName">rs1[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/rs2" type="array">
+      <obj_property name="ElementShortName">rs2[2:0]</obj_property>
+      <obj_property name="ObjectShortName">rs2[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/rd" type="array">
+      <obj_property name="ElementShortName">rd[2:0]</obj_property>
+      <obj_property name="ObjectShortName">rd[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/imm_out" type="array">
+      <obj_property name="ElementShortName">imm_out[7:0]</obj_property>
+      <obj_property name="ObjectShortName">imm_out[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/ImmSrc" type="array">
+      <obj_property name="ElementShortName">ImmSrc[1:0]</obj_property>
+      <obj_property name="ObjectShortName">ImmSrc[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/RegWrite" type="logic">
+      <obj_property name="ElementShortName">RegWrite</obj_property>
+      <obj_property name="ObjectShortName">RegWrite</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/execute_stage/operand1" type="array">
+      <obj_property name="ElementShortName">operand1[7:0]</obj_property>
+      <obj_property name="ObjectShortName">operand1[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/execute_stage/operand2" type="array">
+      <obj_property name="ElementShortName">operand2[7:0]</obj_property>
+      <obj_property name="ObjectShortName">operand2[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/execute_stage/alu_out" type="array">
+      <obj_property name="ElementShortName">alu_out[7:0]</obj_property>
+      <obj_property name="ObjectShortName">alu_out[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/execute_stage/zero" type="logic">
+      <obj_property name="ElementShortName">zero</obj_property>
+      <obj_property name="ObjectShortName">zero</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/execute_stage/alu_inst/is_unsigned" type="logic">
+      <obj_property name="ElementShortName">is_unsigned</obj_property>
+      <obj_property name="ObjectShortName">is_unsigned</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/mem_stage/mem_data_out" type="array">
+      <obj_property name="ElementShortName">mem_data_out[7:0]</obj_property>
+      <obj_property name="ObjectShortName">mem_data_out[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/mem_stage/write_data_MEM" type="array">
+      <obj_property name="ElementShortName">write_data_MEM[7:0]</obj_property>
+      <obj_property name="ObjectShortName">write_data_MEM[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/writeback_stage/ResultSrc_WB" type="logic">
+      <obj_property name="ElementShortName">ResultSrc_WB</obj_property>
+      <obj_property name="ObjectShortName">ResultSrc_WB</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/writeback_stage/mem_data_WB" type="array">
+      <obj_property name="ElementShortName">mem_data_WB[7:0]</obj_property>
+      <obj_property name="ObjectShortName">mem_data_WB[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/writeback_stage/wb_mux/ResultSrc_d" type="logic">
+      <obj_property name="ElementShortName">ResultSrc_d</obj_property>
+      <obj_property name="ObjectShortName">ResultSrc_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/decode_stage/reg_file/regfile" type="array">
+      <obj_property name="ElementShortName">regfile[7:0][7:0]</obj_property>
+      <obj_property name="ObjectShortName">regfile[7:0][7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/mem_stage/data_mem/data_memory" type="array">
+      <obj_property name="ElementShortName">data_memory[0:255][7:0]</obj_property>
+      <obj_property name="ObjectShortName">data_memory[0:255][7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/uut/datapath/mem_stage/data_mem/data_memory[108]" type="array">
+      <obj_property name="ElementShortName">[108][7:0]</obj_property>
+      <obj_property name="ObjectShortName">[108][7:0]</obj_property>
+   </wvobject>
+</wave_config>
