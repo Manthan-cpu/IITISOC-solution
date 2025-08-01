@@ -15,6 +15,8 @@ module register_file(
    reg [2:0] read_reg1_d;
    reg [2:0] read_reg2_d;
    reg RegWrite_d;
+    reg RegWrite_dd;
+   reg  [2:0] write_data_d;
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             read_reg1_d <=0;
@@ -30,14 +32,15 @@ module register_file(
     assign read_data2 = regfile[read_reg2_d];
     assign read_data1 = regfile[read_reg1_d];
     integer i;
-    
-    always@(*) begin
+
+    always@(posedge clk or posedge reset) begin
         if (reset) begin
             for (i=0; i<8; i = i+1)
-                regfile[i] = 8'b0;
+                regfile[i] <= 8'b0;
         end
         else if (RegWrite_d) begin
-            regfile[write_reg] = write_data;
+            regfile[write_reg] <= write_data;
         end
     end        
+    
 endmodule
