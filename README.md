@@ -49,7 +49,7 @@ This project implements a custom 8-bit RISC-style processor from scratch, coveri
 
 ### 🔹 8-bit RISC Architecture
 
-- 8-bit wide data path  
+- 16-bit wide data path  
 - 3-bit register addresses (8 general-purpose registers)  
 - Modular, beginner-friendly design  
 
