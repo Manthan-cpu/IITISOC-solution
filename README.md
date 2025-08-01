@@ -9,30 +9,39 @@ This project implements a custom 8-bit RISC-style processor from scratch, coveri
 ## 📂 Repository Structure
 
 ```
-IITISoC-solution
+.
+├── Compiler/
+│   ├── compiler.py
+│   ├── compiler_gen.py
+│   ├── input_gen.txt
+│   └── output_gen.txt
 ├── LICENSE
 ├── README.md
-├── docs
+├── assembler/
+│   ├── assembler.py
+│   └── assembly_code
+├── docs/
 │   ├── Architecture_Diagram.jpg
-│   └── ISA_Specification
-├── sim
-│   ├── instructions.mem
+│   └── ISA_Specification.md
+├── sim/
+│   ├── instruction.mem
 │   └── testbench.v
-└── src
+└── src/
+    ├── Fetch_pipeline.v
+    ├── Stage_MEM.v
+    ├── Stage_wb.v
     ├── alu.v
-    ├── control_unit.v
     ├── control_hazard.v
+    ├── control_unit.v
     ├── data_memory.v
-    ├── datapath_pipelined.v
+    ├── datapath.v
     ├── decode.v
     ├── execute.v
-    ├── fetch789.v
     ├── hazard_detection_unit.v
     ├── immediate_generator.v
+    ├── raw_hazard.v
     ├── register_file.v
-    ├── stage_MEM.v
-    ├── stage_WB.v
-    ├── top_microprocessor.v
+    ├── top_module.v
     └── write_back.v
 ```
 
@@ -93,6 +102,95 @@ Includes:
 - **Control Hazard Unit**: Flushes mispredicted instructions  
 - **Forwarding Logic**: Minimizes stalls due to RAW hazards  
 
+## 🚀 Getting Started
+
+This guide will walk you through compiling a program, assembling it into machine code, and running the simulation.
+
+### Prerequisites
+
+- **Python 3**: For running the compiler and assembler scripts.
+- **Icarus Verilog**: For compiling and simulating the Verilog code. You can install it using your system's package manager (e.g., `sudo apt-get install iverilog`).
+- **GTKWave**: For viewing the simulation waveforms. You can install it using your system's package manager (e.g., `sudo apt-get install gtkwave`).
+
+### Step 1: Generate Assembly Code
+
+The `Compiler` directory contains a Python script to generate sample assembly programs.
+
+1.  **Navigate to the project root directory.**
+2.  **Run the compiler script:**
+    ```sh
+    python Compiler/compiler.py
+    ```
+3.  **Choose a program to generate.** The script will create a file named `program.txt` in the root directory containing the assembly code.
+
+### Step 2: Assemble the Code
+
+The `assembler` script translates the assembly code in `program.txt` into binary machine code.
+
+1.  **Ensure you are in the project root directory.**
+2.  **Run the assembler script:**
+    ```sh
+    python assembler/assembler.py
+    ```
+3.  This will generate a file named `instruction.mem` in the root directory. This file contains the 16-bit machine instructions that the processor will execute.
+
+### Step 3: Run the Simulation
+
+The simulation is run using Icarus Verilog from the `sim` directory.
+
+1.  **Move the machine code file to the simulation directory:**
+    ```sh
+    mv instruction.mem sim/
+    ```
+2.  **Navigate to the simulation directory:**
+    ```sh
+    cd sim
+    ```
+3.  **Compile the Verilog source files:**
+    ```sh
+    iverilog -o processor.vvp testbench.v ../src/*.v
+    ```
+4.  **Run the compiled simulation:**
+    ```sh
+    vvp processor.vvp
+    ```
+    The simulation will start, and you will see the pipeline status printed to the console at each clock cycle.
+
+### Step 4: View Waveforms
+
+The simulation generates a `waveform.vcd` file, which you can view with GTKWave.
+
+1.  **Ensure you are in the `sim` directory.**
+2.  **Open the waveform file with GTKWave:**
+    ```sh
+    gtkwave waveform.vcd
+    ```
+
+### Running with Vivado
+
+For users of the Xilinx Vivado Design Suite, follow these steps to run the simulation:
+
+1.  **Create a New Project:**
+    -   Launch Vivado and create a new project.
+    -   Choose a project name and location.
+    -   Select "RTL Project" and ensure "Do not specify sources at this time" is checked.
+    -   Select a target Xilinx device (e.g., from the Artix-7 family). The specific device is not critical for simulation.
+
+2.  **Add Design Sources:**
+    -   In the "Sources" window, right-click "Design Sources" and select "Add Sources."
+    -   Add all the Verilog files from the `src/` directory.
+
+3.  **Add Simulation Sources:**
+    -   Right-click "Simulation Sources" and select "Add Sources."
+    -   Add the `sim/testbench.v` file.
+
+4.  **Add Memory File:**
+    -   The simulation requires the `instruction.mem` file. You will need to add this file to your project and configure the `fetch789` module to find it. In the "Sources" window, find the `instruction_memory` array declaration in `fetch789.v` under `sim_1` -> `testbench` -> `uut` -> `datapath` -> `fetch_stage`.
+    -   Ensure the `$readmemb` path points to a copy of `instruction.mem` within your Vivado project directory. You may need to copy the file into your project's `sim_1/imports` directory.
+
+5.  **Run the Simulation:**
+    -   In the Flow Navigator, click "Run Simulation."
+    -   The simulation will launch, and you can view the waveforms in the Vivado simulator.
 
 ## 👥 Contributors
 
