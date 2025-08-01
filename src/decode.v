@@ -1,7 +1,5 @@
 `timescale 1ns / 1ps
 
-
-
 module decode(
     input wire clk,
     input wire reset,
@@ -30,6 +28,18 @@ module decode(
     reg signed [7:0] imm_w;
     wire signed [7:0] imm_gen_out;
     wire signed [7:0] rf_read_data1, rf_read_data2;
+    reg signed [7:0] rf_read_data1_d, rf_read_data2_d ;
+ 
+always@(*)begin
+if(reset || flush) begin
+rf_read_data1_d = 8'sb0 ;
+rf_read_data2_d = 8'sb0 ;
+end
+else begin
+rf_read_data1_d = rf_read_data1 ;
+rf_read_data2_d = rf_read_data2 ;
+end
+end
 
     always @(*) begin
         rs1_w = 3'b0;
@@ -62,25 +72,34 @@ module decode(
     
     wire [2:0] rf_rs1 = rs1_w;
     wire [2:0] rf_rs2 = rs2_w;
-
+    
+    
+always@(posedge clk or posedge reset) begin
+ if (reset || flush) begin
+  read_data1<= 8'sb0;
+   read_data2 <= 8'sb0;
+end
+end
    
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            rs1 <= 3'b0;
-            rs2 <= 3'b0;
-            rd  <= 3'b0;
-            read_data1 <= 8'sb0;
-            read_data2 <= 8'sb0;
-            imm_out <= 8'sb0;
-        end else begin
+    always @(*) begin
+        if (reset || flush) begin
+            rs1 = 3'b0;
+            rs2 = 3'b0;
+            rd  = 3'b0;
+            imm_out = 8'sb0;
+            end
+            end
+            
+            always@(posedge clk or posedge reset) begin
+              if (~reset && ~ flush) 
             rs1 <= rs1_w;
             rs2 <= rs2_w;
             rd  <= rd_w;
-            read_data1 <= rf_read_data1;
-           read_data2 <= rf_read_data2;
+            read_data1 <= rf_read_data1_d;
+           read_data2 <= rf_read_data2_d;
             imm_out <= imm_gen_out;
         end
-    end
+ 
   
     register_file reg_file(
         .clk(clk),
