@@ -5,7 +5,7 @@ module testbench;
     reg clk;
     reg reset;
 
-    top_microprocessor uut (
+    top_module uut (
         .clk(clk),
         .reset(reset)
     );
