@@ -187,6 +187,7 @@ module datapath_pipelined(
     stage_MEM mem_stage(
         .clk(clk),
         .reset(reset),
+        .flush(flush),
         .MemRead_MEM(MemRead_MEM),
         .MemWrite_MEM(MemWrite_MEM),
         .ResultSrc_MEM(ResultSrc_MEM),
@@ -213,7 +214,7 @@ module datapath_pipelined(
         .alu_result_WB(alu_result_MEM),
         .mem_data_WB(mem_data_WB),
         .rd_WB(rd_WB),
-           .RegWrite_final(RegWrite_final),
+        .RegWrite_final(RegWrite_final),
         .write_data_WB(write_data_WB),
         .rd_final(rd_final)
     );
