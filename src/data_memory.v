@@ -5,6 +5,7 @@
 module memory_stage(
     input wire        clk,
     input wire        reset,
+     input wire       flush,
     input wire        MemRead,
     input wire        MemWrite,
     input wire [7:0]  alu_result,   
@@ -23,18 +24,32 @@ module memory_stage(
     integer i;
     reg[1:0] forward_Bd;
     reg[7:0] alu_result_e;
-
+    reg flush_d ;
+    reg flush_dd ;
+    reg MemRead_c ;
+    reg MemRead_ddd ;
+    reg MemRead_dd ;
+    reg MemRead_d ;
+    reg [7:0] write_data_d;
     always@(posedge clk or posedge reset)begin
     if(reset) begin
         alu_result_d <= 0;
         forward_Bd <= 0;
         alu_result_dd <= 8'b0;
-    end
+        MemRead_ddd <= 0 ;
+        MemRead_dd <= 0 ;
+        MemRead_d <= 0 ;
+           write_data_d<=8'b0;
+        end
 
     else begin  
         alu_result_d <=  alu_result ; 
         forward_Bd <= forward_B ;
         alu_result_dd <=  alu_result_d ; 
+         MemRead_ddd <= MemRead_dd ;
+         MemRead_dd <= MemRead_d ;
+         MemRead_d <= MemRead;
+         write_data_d<=write_data;
     end
     end
 
@@ -42,14 +57,15 @@ module memory_stage(
     always @(*) begin
     case(forward_Bd)
         2'b10: begin write_data_r = alu_result_dd ;end
-        default: begin write_data_r = write_data; end
+        default: begin write_data_r = write_data_d; end
     endcase
     end
 
     always @(posedge clk or posedge reset) begin
-       if(reset) begin
+       if(reset || flush_d) begin
          MemWrite_d <= 0;
         MemWrite_dd <=0;
+       
        end
        
        else begin
@@ -65,14 +81,17 @@ module memory_stage(
     
     always @(posedge clk) begin
     write_data_r_d<=write_data_r;
+    flush_d <= flush ;
+    flush_dd <= flush_d ;
         if (MemWrite_dd)
             data_memory[alu_result_d] <= write_data_r;
     end
 
+    
     always @(posedge clk or posedge reset) begin
         if (reset)
             read_data <= 8'b0;
-        else if (MemRead)
+        else if (MemRead_d)
             read_data <= data_memory[alu_result];
     end
 
