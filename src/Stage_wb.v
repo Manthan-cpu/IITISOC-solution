@@ -3,6 +3,7 @@
 module stage_WB(
     input  wire        clk,
     input  wire        reset,
+     input  wire        flush,
     input  wire        RegWrite_WB,     
     input  wire        ResultSrc_WB,    
     input  wire [7:0]  alu_result_WB,   
@@ -15,14 +16,24 @@ module stage_WB(
 );
 
     wire [7:0] wb_data_mux;
+        reg ResultSrc_d ;
+always@(posedge clk) begin
+ResultSrc_d <= ResultSrc_WB ;
+end
     writeback_stage wb_mux (
-        .ResultSrc(ResultSrc_WB),
+        .ResultSrc(ResultSrc_d),
         .alu_result(alu_result_WB),
         .mem_data(mem_data_WB),
         .writeback_data(wb_data_mux),
         .clk(clk),
+        .flush(flush),
         .reset(reset)
     );
+//    reg ResultSrc_d ;
+//always@(posedge clk) begin
+//ResultSrc_d <= ResultSrc_WB ;
+//end
+
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             RegWrite_final <= 1'b0;
