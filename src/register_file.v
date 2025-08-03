@@ -33,13 +33,13 @@ module register_file(
     assign read_data1 = regfile[read_reg1_d];
     integer i;
 
-    always@(posedge clk or posedge reset) begin
+    always@(*) begin
         if (reset) begin
             for (i=0; i<8; i = i+1)
-                regfile[i] <= 8'b0;
+                regfile[i] = 8'b0;
         end
         else if (RegWrite_d) begin
-            regfile[write_reg] <= write_data;
+            regfile[write_reg] = write_data;
         end
     end        
     
